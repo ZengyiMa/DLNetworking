@@ -9,7 +9,6 @@
 #import "DLReqeustPromise.h"
 
 @interface DLReqeustPromise ()
-@property (nonatomic, strong) DLReqeustPromise *promise;
 @end
 
 @implementation DLReqeustPromise
@@ -43,8 +42,18 @@
         }
     }
     
-    if (self.promise) {
-        [self.promise changeState:self.state withValue:returnValue];
+    if ([returnValue isKindOfClass:[DLReqeustPromise class]]) {
+        DLReqeustPromise *promise = returnValue;
+        promise.promise = self.promise.promise;
+        promise.onFulfilled = self.promise.onFulfilled;
+        promise.onRejected = self.promise.onRejected;
+        return;
+    }
+    else
+    {
+        if (self.promise) {
+            [self.promise changeState:self.state withValue:returnValue];
+        }
     }
 }
 

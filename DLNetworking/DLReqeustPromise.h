@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, DLReqeustPromiseState) {
 @property (nonatomic, copy) DLReqeustPromiseHandleBlock onRejected;
 @property (nonatomic, assign) DLReqeustPromiseState state;
 @property (nonatomic, strong) id value;
+@property (nonatomic, strong) DLReqeustPromise *promise;
 
 
 - (void)changeState:(DLReqeustPromiseState)state withValue:(id)value;

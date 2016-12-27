@@ -20,7 +20,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) id requestParameters;
 
-@property (nonatomic, strong) DLReqeustPromise *promise;
 
 @end
 
