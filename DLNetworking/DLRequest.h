@@ -20,6 +20,7 @@ typedef DLReqeustPromise *(^DLRequestSendBlock)(void);
 
 @interface DLRequest : NSObject
 
+@property (nonatomic, assign) NSUInteger taskID;
 
 + (DLRequestVoidBlock)start;
 

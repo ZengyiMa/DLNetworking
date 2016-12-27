@@ -7,6 +7,7 @@
 //
 
 #import "DLRequest.h"
+#import "DLNetManager.h"
 
 
 typedef NS_ENUM(NSUInteger, DLRequestMethod) {
@@ -14,15 +15,12 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     DLRequestMethodPost,
 };
 
-
-
 @interface DLRequest ()
-
 @property (nonatomic, assign) DLRequestMethod method;
 @property (nonatomic, strong) NSString *requestUrl;
-
 @property (nonatomic, strong) id requestParameters;
 
+@property (nonatomic, strong) DLReqeustPromise *promise;
 
 @end
 
@@ -34,12 +32,19 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^()
     {
        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        NSURLSessionTask *task = nil;
         if (self.method == DLRequestMethodGet) {
-            [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+           task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 NSLog(@"done");
             } failure:nil];
         }
-        return [DLReqeustPromise new];
+        self.taskID = task.taskIdentifier;
+        
+        [[DLNetManager manager] addRequest:self];
+        
+        self.promise = [DLReqeustPromise new];
+        
+        return promise;
     };
 }
 

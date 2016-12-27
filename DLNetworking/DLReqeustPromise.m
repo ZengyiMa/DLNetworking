@@ -14,9 +14,29 @@
 {
     return ^(DLReqeustPromiseHandleBlock fulfilled, DLReqeustPromiseHandleBlock rejected)
     {
-        NSLog(@"then");
+        self.onFulfilled = fulfilled;
+        self.onRejected = rejected;
         return [DLReqeustPromise new];
     };
+}
+
+- (void)setState:(DLReqeustPromiseState)state
+{
+    _state = state;
+    
+    if (_state == DLReqeustPromiseStateRejected) {
+        if (self.onRejected) {
+            self.onRejected(nil);
+        }
+    }
+    else if (_state == DLReqeustPromiseStateFulfilled)
+    {
+        if (self.onFulfilled) {
+            self.onFulfilled(nil);
+        }
+    }
+    
+    
 }
 
 
