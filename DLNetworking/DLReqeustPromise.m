@@ -8,6 +8,10 @@
 
 #import "DLReqeustPromise.h"
 
+@interface DLReqeustPromise ()
+@property (nonatomic, strong) DLReqeustPromise *promise;
+@end
+
 @implementation DLReqeustPromise
 
 - (DLReqeustPromiseThenBlock)then
@@ -16,23 +20,31 @@
     {
         self.onFulfilled = fulfilled;
         self.onRejected = rejected;
-        return [DLReqeustPromise new];
+        self.promise = [DLReqeustPromise new];
+        return self.promise;
     };
 }
 
-- (void)setState:(DLReqeustPromiseState)state
+
+
+- (void)changeState:(DLReqeustPromiseState)state withValue:(id)value
 {
-    _state = state;
+    self.state = state;
+    id returnValue = nil;
     if (_state == DLReqeustPromiseStateRejected) {
         if (self.onRejected) {
-            self.onRejected(self.value);
+           returnValue = self.onRejected(value);
         }
     }
     else if (_state == DLReqeustPromiseStateFulfilled)
     {
         if (self.onFulfilled) {
-            self.onFulfilled(self.value);
+            returnValue = self.onFulfilled(value);
         }
+    }
+    
+    if (self.promise) {
+        [self.promise changeState:self.state withValue:returnValue];
     }
 }
 

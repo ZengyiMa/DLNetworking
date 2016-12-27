@@ -22,13 +22,14 @@
     DLRequest.start()
              .get()
              .url(@"https://httpbin.org/get")
-             .parameters(nil)
              .send()
-             .then([DLReqeustPromise makeBlock:^(id data) {
-                 NSLog(@"data = %@", data);
-             }], [DLReqeustPromise makeBlock:^(id data) {
-                 NSLog(@"error data = %@", data);
-             }]);
+             .then([DLReqeustPromise makeBlock:^id(id value) {
+                 return value[@"headers"];
+             }], nil)
+             .then([DLReqeustPromise makeBlock:^id(id value) {
+                 NSLog(@"value = %@", value);
+                 return nil;
+             }],nil);
 }
 
 

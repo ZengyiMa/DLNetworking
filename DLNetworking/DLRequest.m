@@ -35,9 +35,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         NSURLSessionTask *task = nil;
         if (self.method == DLRequestMethodGet) {
            task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-               self.promise.state = DLReqeustPromiseStateFulfilled;
+               [self.promise changeState:DLReqeustPromiseStateFulfilled withValue:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                self.promise.state = DLReqeustPromiseStateRejected;
+                [self.promise changeState:DLReqeustPromiseStateRejected withValue:error];
             }];
         }
         self.taskID = task.taskIdentifier;

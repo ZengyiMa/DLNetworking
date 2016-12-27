@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+
 @class DLReqeustPromise;
 
 
-typedef void(^DLReqeustPromiseHandleBlock)(id value);
+typedef id (^DLReqeustPromiseHandleBlock)(id value);
 
 typedef DLReqeustPromise *(^DLReqeustPromiseThenBlock)(DLReqeustPromiseHandleBlock onFulfilled, DLReqeustPromiseHandleBlock onRejected);
 
@@ -33,11 +34,10 @@ typedef NS_ENUM(NSUInteger, DLReqeustPromiseState) {
 @property (nonatomic, strong) id value;
 
 
+- (void)changeState:(DLReqeustPromiseState)state withValue:(id)value;
+
 - (DLReqeustPromiseThenBlock)then;
 
 + (DLReqeustPromiseHandleBlock)makeBlock:(DLReqeustPromiseHandleBlock)block;
-
-
-
 
 @end
