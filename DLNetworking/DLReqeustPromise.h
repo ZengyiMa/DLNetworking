@@ -11,7 +11,7 @@
 @class DLReqeustPromise;
 
 
-typedef void(^DLReqeustPromiseHandleBlock)(id data);
+typedef void(^DLReqeustPromiseHandleBlock)(id value);
 
 typedef DLReqeustPromise *(^DLReqeustPromiseThenBlock)(DLReqeustPromiseHandleBlock onFulfilled, DLReqeustPromiseHandleBlock onRejected);
 
@@ -30,6 +30,8 @@ typedef NS_ENUM(NSUInteger, DLReqeustPromiseState) {
 @property (nonatomic, copy) DLReqeustPromiseHandleBlock onFulfilled;
 @property (nonatomic, copy) DLReqeustPromiseHandleBlock onRejected;
 @property (nonatomic, assign) DLReqeustPromiseState state;
+@property (nonatomic, strong) id value;
+
 
 - (DLReqeustPromiseThenBlock)then;
 

@@ -25,9 +25,9 @@
              .parameters(nil)
              .send()
              .then([DLReqeustPromise makeBlock:^(id data) {
-                 
+                 NSLog(@"data = %@", data);
              }], [DLReqeustPromise makeBlock:^(id data) {
-                 
+                 NSLog(@"error data = %@", data);
              }]);
 }
 

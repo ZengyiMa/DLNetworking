@@ -23,20 +23,17 @@
 - (void)setState:(DLReqeustPromiseState)state
 {
     _state = state;
-    
     if (_state == DLReqeustPromiseStateRejected) {
         if (self.onRejected) {
-            self.onRejected(nil);
+            self.onRejected(self.value);
         }
     }
     else if (_state == DLReqeustPromiseStateFulfilled)
     {
         if (self.onFulfilled) {
-            self.onFulfilled(nil);
+            self.onFulfilled(self.value);
         }
     }
-    
-    
 }
 
 
