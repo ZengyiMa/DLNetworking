@@ -20,7 +20,7 @@
 		6D8FAEE71E1179A20087E091 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE01E1179A20087E091 /* AFURLResponseSerialization.m */; };
 		6D8FAEE81E1179A20087E091 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE21E1179A20087E091 /* AFURLSessionManager.m */; };
 		6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEEA1E1179FD0087E091 /* DLRequest.m */; };
-		6D8FAEEE1E1183220087E091 /* DLReqeustPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEED1E1183220087E091 /* DLReqeustPromise.m */; };
+		6D8FAEEE1E1183220087E091 /* DLPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEED1E1183220087E091 /* DLPromise.m */; };
 		859A937A1E120EF400BF2EEF /* DLNetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 859A93791E120EF400BF2EEF /* DLNetManager.m */; };
 /* End PBXBuildFile section */
 
@@ -50,8 +50,8 @@
 		6D8FAEE21E1179A20087E091 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
 		6D8FAEE91E1179FD0087E091 /* DLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLRequest.h; sourceTree = "<group>"; };
 		6D8FAEEA1E1179FD0087E091 /* DLRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLRequest.m; sourceTree = "<group>"; };
-		6D8FAEEC1E1183220087E091 /* DLReqeustPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLReqeustPromise.h; sourceTree = "<group>"; };
-		6D8FAEED1E1183220087E091 /* DLReqeustPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLReqeustPromise.m; sourceTree = "<group>"; };
+		6D8FAEEC1E1183220087E091 /* DLPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLPromise.h; sourceTree = "<group>"; };
+		6D8FAEED1E1183220087E091 /* DLPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLPromise.m; sourceTree = "<group>"; };
 		859A93781E120EF400BF2EEF /* DLNetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNetManager.h; sourceTree = "<group>"; };
 		859A93791E120EF400BF2EEF /* DLNetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,8 +82,8 @@
 				6D8FAED51E1179A20087E091 /* AFNetworking */,
 				6D8FAEE91E1179FD0087E091 /* DLRequest.h */,
 				6D8FAEEA1E1179FD0087E091 /* DLRequest.m */,
-				6D8FAEEC1E1183220087E091 /* DLReqeustPromise.h */,
-				6D8FAEED1E1183220087E091 /* DLReqeustPromise.m */,
+				6D8FAEEC1E1183220087E091 /* DLPromise.h */,
+				6D8FAEED1E1183220087E091 /* DLPromise.m */,
 				859A93781E120EF400BF2EEF /* DLNetManager.h */,
 				859A93791E120EF400BF2EEF /* DLNetManager.m */,
 			);
@@ -218,7 +218,7 @@
 				6D8FAEC81E1177ED0087E091 /* ViewController.m in Sources */,
 				6D8FAEC51E1177ED0087E091 /* AppDelegate.m in Sources */,
 				6D8FAEE41E1179A20087E091 /* AFNetworkReachabilityManager.m in Sources */,
-				6D8FAEEE1E1183220087E091 /* DLReqeustPromise.m in Sources */,
+				6D8FAEEE1E1183220087E091 /* DLPromise.m in Sources */,
 				6D8FAEC21E1177ED0087E091 /* main.m in Sources */,
 				859A937A1E120EF400BF2EEF /* DLNetManager.m in Sources */,
 				6D8FAEE51E1179A20087E091 /* AFSecurityPolicy.m in Sources */,

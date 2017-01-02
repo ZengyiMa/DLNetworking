@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AFHTTPSessionManager.h"
-#import "DLReqeustPromise.h"
+#import "DLPromise.h"
 
 @class DLRequest;
 
@@ -17,13 +17,13 @@ typedef DLRequest *(^DLRequestIdBlock)(id object);
 typedef DLRequest *(^DLRequestURLBlock)(NSString *url);
 typedef DLRequest *(^DLRequestHeaderBlock)(NSDictionary *headers);
 
-typedef DLReqeustPromise *(^DLRequestSendBlock)(void);
+typedef DLPromise *(^DLRequestSendBlock)(void);
 
 
 @interface DLRequest : NSObject
 
 @property (nonatomic, assign) NSUInteger taskID;
-@property (nonatomic, strong) DLReqeustPromise *promise;
+@property (nonatomic, strong) DLPromise *promise;
 
 
 + (DLRequestVoidBlock)get;
