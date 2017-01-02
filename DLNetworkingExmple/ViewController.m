@@ -15,6 +15,7 @@
 
 @implementation ViewController
 
+//
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -22,22 +23,25 @@
     DLRequest.get()
              .url(@"https://httpbin.org/get")
              .send()
-             .then([DLReqeustPromise makeBlock:^id(id value) {
+             .success([DLPromise makeBlock:^id(id value) {
                  return value[@"headers"];
-             }], nil)
-             .then([DLReqeustPromise makeBlock:^id(id value) {
-                 NSLog(@"value = %@", value);
+             }])
+             .success([DLPromise makeBlock:^id(id value) {
+                 NSLog(@"header value = %@", value);
                  return nil;
-             }],nil);
-//            .then([DLReqeustPromise makeBlock:^id(id value) {
-//                NSLog(@"开始第二个请求");
-//                return DLRequest.start().get().url(@"https://httpbin.org/get").send();
-//            }],nil)
-//            .then([DLReqeustPromise makeBlock:^id(id value) {
-//                NSLog(@"第二个结果");
-//                NSLog(@"value = %@", value);
-//                return nil;
-//            }],nil);
+             }])
+            .success([DLPromise makeBlock:^id(id value) {
+                NSLog(@"开始第二个请求");
+                return DLRequest.get().url(@"https://httpbin.org/get").send();
+            }])
+            .success([DLPromise makeBlock:^id(id value) {
+                NSLog(@"第二个请求的返回值 value = %@", value);
+                return nil;
+            }])
+            .failed([DLPromise makeBlock:^id(id value) {
+                NSLog(@"error = %@", value);
+                return nil;
+            }]);
 }
 
 
