@@ -23,11 +23,12 @@ typedef DLReqeustPromise *(^DLRequestSendBlock)(void);
 @property (nonatomic, assign) NSUInteger taskID;
 @property (nonatomic, strong) DLReqeustPromise *promise;
 
-+ (DLRequestVoidBlock)start;
 
 
-- (DLRequestVoidBlock)get;
-- (DLRequestVoidBlock)post;
++ (DLRequestVoidBlock)get;
++ (DLRequestVoidBlock)post;
+
+
 - (DLRequestIdBlock)parameters;
 - (DLRequestURLBlock)url;
 

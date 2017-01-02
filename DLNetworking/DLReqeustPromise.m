@@ -63,5 +63,10 @@
     return block;
 }
 
+- (void)dealloc
+{
+    NSLog(@"promise delloc");
+}
+
 
 @end

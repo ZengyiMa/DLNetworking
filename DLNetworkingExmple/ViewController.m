@@ -18,9 +18,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
-    DLRequest.start()
-             .get()
+
+    DLRequest.get()
              .url(@"https://httpbin.org/get")
              .send()
              .then([DLReqeustPromise makeBlock:^id(id value) {
@@ -29,16 +28,16 @@
              .then([DLReqeustPromise makeBlock:^id(id value) {
                  NSLog(@"value = %@", value);
                  return nil;
-             }],nil)
-            .then([DLReqeustPromise makeBlock:^id(id value) {
-                NSLog(@"开始第二个请求");
-                return DLRequest.start().get().url(@"https://httpbin.org/get").send();
-            }],nil)
-            .then([DLReqeustPromise makeBlock:^id(id value) {
-                NSLog(@"第二个结果");
-                NSLog(@"value = %@", value);
-                return nil;
-            }],nil);
+             }],nil);
+//            .then([DLReqeustPromise makeBlock:^id(id value) {
+//                NSLog(@"开始第二个请求");
+//                return DLRequest.start().get().url(@"https://httpbin.org/get").send();
+//            }],nil)
+//            .then([DLReqeustPromise makeBlock:^id(id value) {
+//                NSLog(@"第二个结果");
+//                NSLog(@"value = %@", value);
+//                return nil;
+//            }],nil);
 }
 
 

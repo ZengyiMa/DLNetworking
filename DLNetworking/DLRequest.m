@@ -41,7 +41,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         }
         self.taskID = task.taskIdentifier;
         
-        [[DLNetManager manager] addRequest:self];
+//        [[DLNetManager manager] addRequest:self];
         
         self.promise = [DLReqeustPromise new];
         return self.promise;
@@ -58,12 +58,13 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 }
 
 
-- (DLRequestVoidBlock)get
++ (DLRequestVoidBlock)get
 {
     return ^()
     {
-        self.method = DLRequestMethodGet;
-        return self;
+        DLRequest *request = [self new];
+        request.method = DLRequestMethodGet;
+        return request;
     };
 }
 
@@ -76,13 +77,13 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-
-- (DLRequestVoidBlock)post
++ (DLRequestVoidBlock)post
 {
     return ^()
     {
-        self.method = DLRequestMethodPost;
-        return self;
+        DLRequest *request = [self new];
+        request.method = DLRequestMethodPost;
+        return request;
     };
 }
 
@@ -93,6 +94,11 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     {
         return [DLRequest new];
     };
+}
+
+- (void)dealloc
+{
+    NSLog(@"delloc request");
 }
 
 
