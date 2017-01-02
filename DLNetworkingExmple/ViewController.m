@@ -35,6 +35,7 @@
                 return DLRequest.start().get().url(@"https://httpbin.org/get").send();
             }],nil)
             .then([DLReqeustPromise makeBlock:^id(id value) {
+                NSLog(@"第二个结果");
                 NSLog(@"value = %@", value);
                 return nil;
             }],nil);
