@@ -15,6 +15,8 @@
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 typedef DLRequest *(^DLRequestIdBlock)(id object);
 typedef DLRequest *(^DLRequestURLBlock)(NSString *url);
+typedef DLRequest *(^DLRequestHeaderBlock)(NSDictionary *headers);
+
 typedef DLReqeustPromise *(^DLRequestSendBlock)(void);
 
 
@@ -24,13 +26,13 @@ typedef DLReqeustPromise *(^DLRequestSendBlock)(void);
 @property (nonatomic, strong) DLReqeustPromise *promise;
 
 
-
 + (DLRequestVoidBlock)get;
 + (DLRequestVoidBlock)post;
 
 
 - (DLRequestIdBlock)parameters;
 - (DLRequestURLBlock)url;
+- (DLRequestHeaderBlock)header;
 
 - (DLRequestSendBlock)send;
 

@@ -19,8 +19,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, assign) DLRequestMethod method;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) id requestParameters;
-
-
+@property (nonatomic, strong) NSDictionary *requestHeader;
 @end
 
 @implementation DLRequest
@@ -40,8 +39,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
             }];
         }
         self.taskID = task.taskIdentifier;
-        
-//        [[DLNetManager manager] addRequest:self];
         
         self.promise = [DLReqeustPromise new];
         return self.promise;
@@ -77,6 +74,17 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
+- (DLRequestHeaderBlock)header
+{
+    return ^(NSDictionary *header)
+    {
+        self.requestHeader = header;
+        return self;
+    };
+}
+
+
+
 + (DLRequestVoidBlock)post
 {
     return ^()
@@ -88,13 +96,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 }
 
 
-+ (DLRequestVoidBlock)start
-{
-    return ^()
-    {
-        return [DLRequest new];
-    };
-}
+
 
 - (void)dealloc
 {
