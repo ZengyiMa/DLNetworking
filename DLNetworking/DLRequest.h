@@ -7,34 +7,39 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AFHTTPSessionManager.h"
-#import "DLPromise.h"
+#import "DLResponse.h"
 
 @class DLRequest;
+@class DLResponse;
 
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 typedef DLRequest *(^DLRequestIdBlock)(id object);
-typedef DLRequest *(^DLRequestURLBlock)(NSString *url);
-typedef DLRequest *(^DLRequestHeaderBlock)(NSDictionary *headers);
+typedef DLRequest *(^DLRequestStringBlock)(NSString *string);
+typedef DLRequest *(^DLRequestDictionaryBlock)(NSDictionary *dict);
+typedef DLResponse *(^DLResponseVoidBlock)(void);
 
-typedef DLPromise *(^DLRequestSendBlock)(void);
 
 
 @interface DLRequest : NSObject
 
 @property (nonatomic, assign) NSUInteger taskID;
-@property (nonatomic, strong) DLPromise *promise;
+@property (nonatomic, strong, readonly) DLResponse *response;
+
+// 发起请求
++ (DLRequestStringBlock)get;
++ (DLRequestStringBlock)post;
+
+// 参数
+
+// 发起请求
+- (DLResponseVoidBlock)send;
 
 
-+ (DLRequestVoidBlock)get;
-+ (DLRequestVoidBlock)post;
+// promise
 
 
-- (DLRequestIdBlock)parameters;
-- (DLRequestURLBlock)url;
-- (DLRequestHeaderBlock)header;
 
-- (DLRequestSendBlock)send;
+
 
 
 

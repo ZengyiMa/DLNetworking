@@ -19,29 +19,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-
-    DLRequest.get()
-             .url(@"https://httpbin.org/get")
-             .send()
-             .success([DLPromise makeBlock:^id(id value) {
-                 return value[@"headers"];
-             }])
-             .success([DLPromise makeBlock:^id(id value) {
-                 NSLog(@"header value = %@", value);
-                 return nil;
-             }])
-            .success([DLPromise makeBlock:^id(id value) {
-                NSLog(@"开始第二个请求");
-                return DLRequest.get().url(@"https://httpbin.org/get").send();
-            }])
-            .success([DLPromise makeBlock:^id(id value) {
-                NSLog(@"第二个请求的返回值 value = %@", value);
-                return nil;
-            }])
-            .failed([DLPromise makeBlock:^id(id value) {
-                NSLog(@"error = %@", value);
-                return nil;
-            }]);
+    
+    DLRequest.get(@"https://httpbin.org/get").send().then(^id(id data){
+        NSLog(@"response = %@", data);
+        return DLRequest.get(@"https://httpbin.org/get?a=b");
+    }).then(^id(id data) {
+        NSLog(@"scond response = %@", data);
+        return data[@"headers"];
+    }).then(^id(id data){
+        NSLog(@"scond header = %@", data);
+        return nil;
+    });
+    
+    
 }
 
 

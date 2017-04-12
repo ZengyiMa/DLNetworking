@@ -7,94 +7,81 @@
 //
 
 #import "DLRequest.h"
-#import "DLNetManager.h"
+#import "AFHTTPSessionManager.h"
+#import <objc/runtime.h>
 
 
 typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     DLRequestMethodGet,
     DLRequestMethodPost,
+    
 };
 
 @interface DLRequest ()
-@property (nonatomic, assign) DLRequestMethod method;
+@property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) id requestParameters;
 @property (nonatomic, strong) NSDictionary *requestHeader;
+
+@property (nonatomic, strong) DLResponse *response;
+
 @end
 
 @implementation DLRequest
 
 
-- (DLRequestSendBlock)send
+- (void)requestNetwork
 {
-    return ^()
-    {
-       AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-        NSURLSessionTask *task = nil;
-        if (self.method == DLRequestMethodGet) {
-           task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-               [self.promise changeState:DLPromiseStateFulfilled withValue:responseObject];
-            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self.promise changeState:DLPromiseStateRejected withValue:error];
-            }];
-        }
-        self.taskID = task.taskIdentifier;
-        self.promise = [DLPromise new];
-        return self.promise;
-    };
-}
-
-- (DLRequestURLBlock)url
-{
-    return ^(NSString *requestUrl)
-    {
-        self.requestUrl = requestUrl;
-        return self;
-    };
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    NSURLSessionTask *task = nil;
+    if (self.requestMethod == DLRequestMethodGet) {
+        task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [self.response responseThenWithData:responseObject];
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        }];
+    }
+    self.taskID = task.taskIdentifier;
 }
 
 
-+ (DLRequestVoidBlock)get
+
+# pragma mark - method
++ (DLRequestStringBlock)get
 {
-    return ^()
+    return ^(NSString *url)
     {
         DLRequest *request = [self new];
-        request.method = DLRequestMethodGet;
-        return request;
-    };
-}
-
-- (DLRequestIdBlock)parameters
-{
-    return ^(NSString *requestParameters)
-    {
-        self.requestParameters = requestParameters;
-        return self;
-    };
-}
-
-- (DLRequestHeaderBlock)header
-{
-    return ^(NSDictionary *header)
-    {
-        self.requestHeader = header;
-        return self;
-    };
-}
-
-
-
-+ (DLRequestVoidBlock)post
-{
-    return ^()
-    {
-        DLRequest *request = [self new];
-        request.method = DLRequestMethodPost;
+        request.response = [DLResponse new];
+        request.requestUrl = url;
+        request.requestMethod = DLRequestMethodGet;
         return request;
     };
 }
 
 
++ (DLRequestStringBlock)post
+{
+    return ^(NSString *url)
+    {
+        DLRequest *request = [self new];
+        request.response = [DLResponse new];
+        request.requestUrl = url;
+        request.requestMethod = DLRequestMethodPost;
+        return request;
+    };
+}
+
+#pragma mark - request
+- (DLResponseVoidBlock)send
+{
+    return ^()
+    {
+        
+        [self requestNetwork];
+        
+        return self.response;
+    };
+}
 
 
 - (void)dealloc
