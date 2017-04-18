@@ -10,10 +10,17 @@
 
 
 
-@interface DLResponse ()
-@property (nonatomic, strong) NSMutableArray *thens;
-@property (nonatomic, strong) NSMutableArray *errors;
+@interface __DLResponseBlock : NSObject
+@property (nonatomic, copy) DLResponseBlock block;
+@property (nonatomic, assign) BOOL isError;
+@end
 
+@implementation __DLResponseBlock
+
+@end
+
+@interface DLResponse ()
+@property (nonatomic, strong) NSMutableArray<__DLResponseBlock *> *blocks;
 @end
 
 
@@ -27,66 +34,81 @@
     return ^(DLResponseHandleBlock block)
     {
         if (block) {
-            [self.thens addObject:block];
+            __DLResponseBlock *_block = [__DLResponseBlock new];
+            _block.block = block;
+            [self.blocks addObject:_block];
         }
         return self;
     };
 }
-
 
 - (DLResponseBlock)error
 {
     return ^(DLResponseHandleBlock block)
     {
         if (block) {
-            [self.errors addObject:block];
+            
+            __DLResponseBlock *_block = [__DLResponseBlock new];
+            _block.block = block;
+            _block.isError = YES;
+            [self.blocks addObject:_block];
         }
         return self;
     };
 }
 
-- (void)responseThenWithData:(id)data
+- (void)responseWithData:(id)data isError:(BOOL)isError
 {
     id returnValue = data;
     DLRequest *reqeust = nil;
-    for (DLResponseHandleBlock block in self.thens) {
+    for (__DLResponseBlock *block in self.blocks) {
+        
         if (reqeust == nil &&  [returnValue isKindOfClass:[DLRequest class]]) {
             // 是一个请求的
             reqeust = returnValue;
-            reqeust.response.then(block);
+            if (block.isError) {
+                reqeust.response.error(block.block);
+            } else {
+                reqeust.response.then(block.block);
+            }
+            
         }
         else if (reqeust) {
-            reqeust.response.then(block);
+            if (block.isError) {
+                reqeust.response.error(block.block);
+            } else {
+                reqeust.response.then(block.block);
+            }
         }
         else {
-            returnValue = block(returnValue);
+            if (isError) {
+                if (block.isError) {
+                    returnValue = block.block(returnValue);
+                } else {
+                    continue;
+                }
+            } else {
+                if (!block.isError) {
+                    returnValue = block.block(returnValue);
+                }
+                else {
+                    continue;
+                }
+            }
         }
     }
-    
-    if (reqeust)
-    {
+    if (reqeust) {
         reqeust.send();
     }
-    
+
 }
 
-- (NSMutableArray *)thens
+- (NSMutableArray *)blocks
 {
-    if (!_thens) {
-        _thens = [NSMutableArray array];
+    if (!_blocks) {
+        _blocks = [NSMutableArray array];
     }
-    return _thens;
+    return _blocks;
 }
-
-- (NSMutableArray *)errors
-{
-    if (!_errors) {
-        _errors = [NSMutableArray array];
-    }
-    return _errors;
-}
-
-
-
 
 @end

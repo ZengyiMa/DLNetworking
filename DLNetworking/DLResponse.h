@@ -18,12 +18,11 @@ typedef DLResponse *(^DLResponseBlock)(DLResponseHandleBlock block);
 
 @interface DLResponse : NSObject
 
+@property (nonatomic, weak) DLRequest *request;
+
 - (DLResponseBlock)then;
 - (DLResponseBlock)error;
 
-
-
-- (void)responseThenWithData:(id )data;
-- (void)responseErrorWithData:(id )data;
+- (void)responseWithData:(id)data isError:(BOOL)isError;
 
 @end

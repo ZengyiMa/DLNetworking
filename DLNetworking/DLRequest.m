@@ -36,8 +36,15 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     NSURLSessionTask *task = nil;
     if (self.requestMethod == DLRequestMethodGet) {
         task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            [self.response responseThenWithData:responseObject];
+            [self.response responseWithData:responseObject isError:NO];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            [self.response responseWithData:error isError:YES];
+        }];
+    } else if (self.requestMethod == DLRequestMethodPost) {
+        task = [manager POST:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [self.response responseWithData:responseObject isError:NO];
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            [self.response responseWithData:error isError:YES];
         }];
     }
     self.taskID = task.taskIdentifier;
