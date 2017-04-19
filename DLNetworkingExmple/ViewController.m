@@ -24,7 +24,7 @@
     DLRequest.get(@"https://httpbin.org/get").send()
     .then(^id(id data){
         NSLog(@"response = %@", data);
-        return DLRequest.get(@"https://www.404.com");
+        return DLRequest.get(@"https://httpbin.org/get?a=b");
     })
     .then(^id(id data) {
         NSLog(@"scond response = %@", data);

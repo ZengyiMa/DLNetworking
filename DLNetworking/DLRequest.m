@@ -17,14 +17,26 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     
 };
 
+
+
+@interface __DLRequestBlock : NSObject
+@property (nonatomic, copy) DLRequestBlock block;
+@property (nonatomic, assign) BOOL isError;
+@end
+
+@implementation __DLRequestBlock
+
+@end
+
+
+
+
 @interface DLRequest ()
 @property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) id requestParameters;
 @property (nonatomic, strong) NSDictionary *requestHeader;
-
-@property (nonatomic, strong) DLResponse *response;
-
+@property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 @end
 
 @implementation DLRequest
@@ -36,15 +48,15 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     NSURLSessionTask *task = nil;
     if (self.requestMethod == DLRequestMethodGet) {
         task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            [self.response responseWithData:responseObject isError:NO];
+            [self responseWithData:responseObject isError:NO];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [self.response responseWithData:error isError:YES];
+            [self responseWithData:error isError:YES];
         }];
     } else if (self.requestMethod == DLRequestMethodPost) {
         task = [manager POST:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            [self.response responseWithData:responseObject isError:NO];
+            [self responseWithData:responseObject isError:NO];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [self.response responseWithData:error isError:YES];
+            [self responseWithData:error isError:YES];
         }];
     }
     self.taskID = task.taskIdentifier;
@@ -58,7 +70,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(NSString *url)
     {
         DLRequest *request = [self new];
-        request.response = [DLResponse new];
         request.requestUrl = url;
         request.requestMethod = DLRequestMethodGet;
         return request;
@@ -71,7 +82,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(NSString *url)
     {
         DLRequest *request = [self new];
-        request.response = [DLResponse new];
         request.requestUrl = url;
         request.requestMethod = DLRequestMethodPost;
         return request;
@@ -79,15 +89,96 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 }
 
 #pragma mark - request
-- (DLResponseVoidBlock)send
+- (DLRequestVoidBlock)send
 {
     return ^()
     {
-        
         [self requestNetwork];
-        
-        return self.response;
+        return self;
     };
+}
+
+- (DLRequestBlock)then
+{
+    return ^(DLRequestHandleBlock block)
+    {
+        if (block) {
+            __DLRequestBlock *_block = [__DLRequestBlock new];
+            _block.block = block;
+            [self.blocks addObject:_block];
+        }
+        return self;
+    };
+}
+
+- (DLRequestBlock)error
+{
+    return ^(DLRequestHandleBlock block)
+    {
+        if (block) {
+            
+            __DLRequestBlock *_block = [__DLRequestBlock new];
+            _block.block = block;
+            _block.isError = YES;
+            [self.blocks addObject:_block];
+        }
+        return self;
+    };
+}
+
+- (void)responseWithData:(id)data isError:(BOOL)isError
+{
+    id returnValue = data;
+    DLRequest *reqeust = nil;
+    for (__DLRequestBlock *block in self.blocks) {
+        
+        if (reqeust == nil &&  [returnValue isKindOfClass:[DLRequest class]]) {
+            // 是一个请求的
+            reqeust = returnValue;
+            if (block.isError) {
+                reqeust.error(block.block);
+            } else {
+                reqeust.then(block.block);
+            }
+            
+        }
+        else if (reqeust) {
+            if (block.isError) {
+                reqeust.error(block.block);
+            } else {
+                reqeust.then(block.block);
+            }
+        }
+        else {
+            if (isError) {
+                if (block.isError) {
+                    returnValue = block.block(returnValue);
+                } else {
+                    continue;
+                }
+            } else {
+                if (!block.isError) {
+                    returnValue = block.block(returnValue);
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+    if (reqeust) {
+        reqeust.send();
+    }
+    
+}
+
+
+- (NSMutableArray *)blocks
+{
+    if (!_blocks) {
+        _blocks = [NSMutableArray array];
+    }
+    return _blocks;
 }
 
 
