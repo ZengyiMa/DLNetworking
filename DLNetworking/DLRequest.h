@@ -28,6 +28,9 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 + (DLRequestStringBlock)post;
 
 // 参数
+- (DLRequestDictionaryBlock)parameters;
+
+
 
 // 发起请求
 - (DLRequestVoidBlock)send;

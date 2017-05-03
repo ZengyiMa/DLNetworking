@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @interface DLRequest ()
 @property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
-@property (nonatomic, strong) id requestParameters;
+@property (nonatomic, strong) NSDictionary *requestParameters;
 @property (nonatomic, strong) NSDictionary *requestHeader;
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 @end
@@ -85,6 +85,14 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         request.requestUrl = url;
         request.requestMethod = DLRequestMethodPost;
         return request;
+    };
+}
+
+- (DLRequestDictionaryBlock)parameters
+{
+    return ^(NSDictionary *dict) {
+        self.requestParameters = dict;
+        return self;
     };
 }
 

@@ -20,18 +20,16 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-//    https://httpbin.org/get?a=b
-    DLRequest.get(@"https://httpbin.org/get").send()
-    .then(^id(id data){
-        NSLog(@"response = %@", data);
-        return DLRequest.get(@"https://httpbin.org/get?a=b");
-    })
+    
+    DLRequest.get(@"https://httpbin.org/get")
+    .parameters(@{@"a":@"b"})
+    .send()
     .then(^id(id data) {
-        NSLog(@"scond response = %@", data);
+        NSLog(@"response = %@", data);
         return data[@"headers"];
     })
     .then(^id(id data){
-        NSLog(@"scond header = %@", data);
+        NSLog(@"header = %@", data);
         return nil;
     }).error(^id(id data) {
         NSLog(@"error = %@", data);
