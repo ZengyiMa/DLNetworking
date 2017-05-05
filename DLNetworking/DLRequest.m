@@ -35,8 +35,10 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) NSDictionary *requestParameters;
-@property (nonatomic, strong) NSDictionary *requestHeader;
+@property (nonatomic, strong) NSDictionary *requestHeaders;
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
+
+
 @end
 
 @implementation DLRequest
@@ -64,34 +66,44 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 
 
+
+
+
 # pragma mark - method
-+ (DLRequestStringBlock)get
++ (instancetype)get
 {
-    return ^(NSString *url)
-    {
-        DLRequest *request = [self new];
-        request.requestUrl = url;
-        request.requestMethod = DLRequestMethodGet;
-        return request;
-    };
+    DLRequest *request = [self new];
+    request.requestMethod = DLRequestMethodGet;
+    return request;
 }
 
 
-+ (DLRequestStringBlock)post
++ (instancetype)post
 {
-    return ^(NSString *url)
-    {
-        DLRequest *request = [self new];
-        request.requestUrl = url;
-        request.requestMethod = DLRequestMethodPost;
-        return request;
+    DLRequest *request = [self new];
+    request.requestMethod = DLRequestMethodPost;
+    return request;
+}
+
+- (DLRequest *(^)(NSString *))url {
+    return ^(NSString *url) {
+        self.requestUrl = url;
+        return self;
     };
 }
 
-- (DLRequestDictionaryBlock)parameters
+- (DLRequest *(^)(NSDictionary *))parameters
 {
-    return ^(NSDictionary *dict) {
-        self.requestParameters = dict;
+    return ^(NSDictionary *parameters) {
+        self.requestParameters = parameters;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(NSDictionary *))headers
+{
+    return ^(NSDictionary *headers) {
+        self.requestHeaders = headers;
         return self;
     };
 }
@@ -106,7 +118,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-- (DLRequestBlock)then
+- (DLRequestBlock)thenBlock
 {
     return ^(DLRequestHandleBlock block)
     {
@@ -119,7 +131,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-- (DLRequestBlock)error
+- (DLRequestBlock)errorBlock
 {
     return ^(DLRequestHandleBlock block)
     {
@@ -144,17 +156,17 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
             // 是一个请求的
             reqeust = returnValue;
             if (block.isError) {
-                reqeust.error(block.block);
+                reqeust.errorBlock(block.block);
             } else {
-                reqeust.then(block.block);
+                reqeust.thenBlock(block.block);
             }
             
         }
         else if (reqeust) {
             if (block.isError) {
-                reqeust.error(block.block);
+                reqeust.errorBlock(block.block);
             } else {
-                reqeust.then(block.block);
+                reqeust.thenBlock(block.block);
             }
         }
         else {

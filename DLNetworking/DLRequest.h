@@ -10,10 +10,27 @@
 
 @class DLRequest;
 
-typedef DLRequest *(^DLRequestVoidBlock)(void);
-typedef DLRequest *(^DLRequestIdBlock)(id object);
-typedef DLRequest *(^DLRequestStringBlock)(NSString *string);
-typedef DLRequest *(^DLRequestDictionaryBlock)(NSDictionary *dict);
+
+
+#define then(code)               \
+thenBlock(^id(id data) {         \
+   id returnValue = nil;         \
+   code                          \
+return returnValue;              \
+})                               \
+
+#define error(code)               \
+errorBlock(^id(id data) {         \
+id returnValue = nil;            \
+code                             \
+return returnValue;              \
+})                               \
+
+
+
+
+
+
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 
 typedef id (^DLRequestHandleBlock)(id data);
@@ -23,14 +40,14 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @interface DLRequest : NSObject
 @property (nonatomic, assign) NSUInteger taskID;
 
+@property (nonatomic, copy, readonly) DLRequest *(^url)(NSString *url);
+@property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
+@property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
+
+
 // 请求方法
-+ (DLRequestStringBlock)get;
-+ (DLRequestStringBlock)post;
-
-// 参数
-- (DLRequestDictionaryBlock)parameters;
-
-
++ (instancetype)get;
++ (instancetype)post;
 
 // 发起请求
 - (DLRequestVoidBlock)send;
@@ -39,8 +56,8 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
 // promise
-- (DLRequestBlock)then;
-- (DLRequestBlock)error;
+- (DLRequestBlock)thenBlock;
+- (DLRequestBlock)errorBlock;
 
 
 
