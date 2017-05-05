@@ -7,8 +7,9 @@
 //
 
 #import "DLRequest.h"
-#import "AFHTTPSessionManager.h"
+#import "AFNetworking.h"
 #import <objc/runtime.h>
+#import "DLNetworkManager.h"
 
 
 typedef NS_ENUM(NSUInteger, DLRequestMethod) {
@@ -44,24 +45,30 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @implementation DLRequest
 
 
+
 - (void)requestNetwork
 {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    NSURLSessionTask *task = nil;
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
+    urlRequest.timeoutInterval = [DLNetworkManager manager].timeoutInterval;
     if (self.requestMethod == DLRequestMethodGet) {
-        task = [manager GET:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            [self responseWithData:responseObject isError:NO];
-        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [self responseWithData:error isError:YES];
-        }];
+        urlRequest.HTTPMethod = @"get";
     } else if (self.requestMethod == DLRequestMethodPost) {
-        task = [manager POST:self.requestUrl parameters:self.requestParameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            [self responseWithData:responseObject isError:NO];
-        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [self responseWithData:error isError:YES];
-        }];
+        urlRequest.HTTPMethod = @"Post";
     }
-    self.taskID = task.taskIdentifier;
+    
+    if (self.requestHeaders) {
+        [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
+    }
+
+   NSURLSessionDataTask *dataTask = [[DLNetworkManager manager].afManager dataTaskWithRequest:[[DLNetworkManager manager].requestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+       if (error) {
+           [self responseWithData:error isError:YES];
+       } else {
+            [self responseWithData:responseObject isError:NO];
+       }
+    }];
+    [dataTask resume];
+   self.taskID = dataTask.taskIdentifier;
 }
 
 

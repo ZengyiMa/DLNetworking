@@ -23,6 +23,7 @@
     DLRequest.get
     .url(@"https://httpbin.org/get")
     .parameters(@{@"a":@"b"})
+    .headers(@{@"header":@"mzy"})
     .send()
     .then({
         NSLog(@"\n === response = %@", data);
