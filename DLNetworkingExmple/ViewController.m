@@ -15,33 +15,58 @@
 
 @implementation ViewController
 
-//
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+}
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0) {
+        
+        switch (indexPath.row) {
+            case 0:
+                [self basicGet];
+                break;
+            case 1:
+                [self basicPost];
+                break;
+            default:
+                break;
+        }
+    }
+
+    
+}
+
+- (void)logName:(NSString *)name info:(id)info
+{
+    NSLog(@"\n === %@ === \n response = %@", name, info);
+}
+
+- (void)basicGet
+{
     DLRequest.get
     .url(@"https://httpbin.org/get")
-    .parameters(@{@"a":@"b"})
-    .headers(@{@"header":@"mzy"})
     .send()
     .then({
-        NSLog(@"\n === response = %@", data);
-        returnValue = data[@"headers"];
-    })
-    .then({
-        NSLog(@"\n === header = %@", data);
-    })
-   .error({
-        NSLog(@"error = %@", data);
+        [self logName:@"basicGet" info:data];
     });
 }
 
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+
+- (void)basicPost
+{
+    DLRequest.post
+    .url(@"https://httpbin.org/post")
+    .send()
+    .then({
+        [self logName:@"basicPost" info:data];
+    });
 }
+
+
 
 
 @end

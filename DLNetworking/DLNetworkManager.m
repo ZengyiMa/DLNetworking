@@ -38,14 +38,21 @@
     return _afManager;
 }
 
-- (id<AFURLRequestSerialization>)requestSerialization
+- (id<AFURLRequestSerialization>)urlRequestSerialization
 {
-    if (!_requestSerialization) {
-        _requestSerialization = [AFHTTPRequestSerializer new];
+    if (!_urlRequestSerialization) {
+        _urlRequestSerialization = [AFHTTPRequestSerializer serializer];
     }
-    return _requestSerialization;
+    return _urlRequestSerialization;
 }
 
+- (id<AFURLRequestSerialization>)jsonRequestSerialization
+{
+    if (!_jsonRequestSerialization) {
+        _jsonRequestSerialization = [AFJSONRequestSerializer serializer];
+    }
+    return _jsonRequestSerialization;
+}
 
 
 @end

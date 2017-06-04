@@ -11,11 +11,12 @@
 
 @interface DLNetworkManager : NSObject
 
-
 @property (nonatomic, assign) NSUInteger timeoutInterval;
-
 @property (nonatomic, strong) AFURLSessionManager *afManager;
-@property (nonatomic, strong) id<AFURLRequestSerialization> requestSerialization;
+
+
+@property (nonatomic, strong) id<AFURLRequestSerialization> urlRequestSerialization;
+@property (nonatomic, strong) id<AFURLRequestSerialization> jsonRequestSerialization;
 
 + (instancetype)manager;
 

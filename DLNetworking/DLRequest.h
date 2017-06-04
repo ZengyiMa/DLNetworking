@@ -12,6 +12,9 @@
 
 
 
+
+
+
 #define then(code)               \
 thenBlock(^id(id data) {         \
    id returnValue = nil;         \
@@ -40,9 +43,14 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @interface DLRequest : NSObject
 @property (nonatomic, assign) NSUInteger taskID;
 
+
 @property (nonatomic, copy, readonly) DLRequest *(^url)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
+
+// 将参数变为json字符串
+@property (nonatomic, copy, readonly) DLRequest *(^jsonRequest)();
+
 
 // 请求方法
 + (instancetype)get;
@@ -50,8 +58,6 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 // 发起请求
 - (DLRequestVoidBlock)send;
-
-
 
 
 // promise

@@ -39,6 +39,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSDictionary *requestHeaders;
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 
+@property (nonatomic, assign) BOOL isJsonRequest;
 
 @end
 
@@ -60,7 +61,10 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
     }
 
-   NSURLSessionDataTask *dataTask = [[DLNetworkManager manager].afManager dataTaskWithRequest:[[DLNetworkManager manager].requestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+    
+    id<AFURLRequestSerialization> requestSerialization = !self.isJsonRequest ? [DLNetworkManager manager].urlRequestSerialization : [DLNetworkManager manager].jsonRequestSerialization;
+    
+   NSURLSessionDataTask *dataTask = [[DLNetworkManager manager].afManager dataTaskWithRequest:[requestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
        if (error) {
            [self responseWithData:error isError:YES];
        } else {
@@ -115,6 +119,14 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     return ^(NSDictionary *headers) {
         self.requestHeaders = headers;
+        return self;
+    };
+}
+
+- (DLRequest *(^)())jsonRequest
+{
+    return ^() {
+        self.isJsonRequest = YES;
         return self;
     };
 }
