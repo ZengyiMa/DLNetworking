@@ -44,7 +44,6 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 
-
 // 请求方法
 + (instancetype)get;
 + (instancetype)post;
