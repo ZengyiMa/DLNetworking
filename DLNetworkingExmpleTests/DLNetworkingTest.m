@@ -41,4 +41,14 @@
     NSLog(@"\n === %@ === \n response = %@", name, info);
 }
 
+- (void)networkTest:(void (^)(XCTestExpectation *expectation))testBlock {
+    
+    if (testBlock) {
+        XCTestExpectation *exp = [self expectationWithDescription:@""];
+        testBlock(exp);
+        [self waitForExpectationsWithTimeout:10 handler:^(NSError * _Nullable error) {
+        }];
+    }
+}
+
 @end
