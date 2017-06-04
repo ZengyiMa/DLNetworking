@@ -39,7 +39,7 @@
 
 - (void)logName:(NSString *)name info:(id)info
 {
-    NSLog(@"\n === %@ === \n response = %@", name, info);
+    NSLog(@"\n\n\n === %@ === \n response = %@ \n\n\n", name, info);
 }
 
 - (void)networkTest:(void (^)(XCTestExpectation *expectation))testBlock {
@@ -60,6 +60,7 @@
         .sendRequest()
         .then(^(id data, id *retval) {
             [self logName:@"basicGet" info:data];
+            XCTAssertTrue(YES, @"");
             [expectation fulfill];
         });
         
@@ -74,6 +75,7 @@
         .sendRequest()
         .then(^(id data, id *retval) {
             [self logName:@"basicPost" info:data];
+            XCTAssertTrue(YES, @"");
             [expectation fulfill];
         });
     }];
