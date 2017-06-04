@@ -20,19 +20,12 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 #pragma mark - manager
 @interface DLNetworkManager : NSObject
-
-@property (nonatomic, assign) NSUInteger timeoutInterval;
 @property (nonatomic, strong) AFURLSessionManager *afManager;
-
-
 @property (nonatomic, strong) id<AFURLRequestSerialization> urlRequestSerialization;
 @property (nonatomic, strong) id<AFURLRequestSerialization> jsonRequestSerialization;
-
 + (instancetype)manager;
 
 @end
-
-
 @implementation DLNetworkManager
 
 
@@ -50,7 +43,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     self = [super init];
     if (self) {
-        self.timeoutInterval = 10;
     }
     return self;
 }
@@ -83,15 +75,11 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @end
 
 
-
-
 @interface __DLRequestBlock : NSObject
 @property (nonatomic, copy) DLRequestHandleBlock block;
 @property (nonatomic, assign) BOOL isError;
 @end
-
 @implementation __DLRequestBlock
-
 @end
 
 
@@ -105,17 +93,26 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 
 @property (nonatomic, assign) BOOL isJsonRequest;
+@property (nonatomic, assign) NSTimeInterval requestTimeOut;
 
 @end
 
 @implementation DLRequest
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.requestTimeOut = 10;
+    }
+    return self;
+}
 
 
 - (void)requestNetwork
 {
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
-    urlRequest.timeoutInterval = [DLNetworkManager manager].timeoutInterval;
+    urlRequest.timeoutInterval = self.requestTimeOut;
     if (self.requestMethod == DLRequestMethodGet) {
         urlRequest.HTTPMethod = @"get";
     } else if (self.requestMethod == DLRequestMethodPost) {
@@ -180,6 +177,14 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
+- (DLRequest *(^)(NSTimeInterval))timeOut
+{
+    return ^(NSTimeInterval timeOut) {
+        self.requestTimeOut = timeOut;
+        return self;
+    };
+}
+
 - (DLRequest *(^)())jsonRequest
 {
     return ^() {
@@ -197,6 +202,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         return self;
     };
 }
+
 
 - (DLRequestBlock)then
 {

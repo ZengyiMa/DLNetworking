@@ -50,7 +50,6 @@
     .sendRequest()
     .then(^(id data, id *retval) {
         [self logName:@"basicGet" info:data];
-//        *retval = data[@"headers"];
     });
 }
 

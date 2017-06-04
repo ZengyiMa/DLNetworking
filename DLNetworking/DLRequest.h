@@ -20,12 +20,16 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @interface DLRequest : NSObject
 @property (nonatomic, assign) NSUInteger taskID;
 
-
 @property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
-
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
+
+
+@property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
+
+
+
 
 // 将参数变为json字符串
 @property (nonatomic, copy, readonly) DLRequest *(^jsonRequest)();
@@ -36,8 +40,8 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
 // promise
-- (DLRequestBlock)then;
-- (DLRequestBlock)failure;
+@property (nonatomic, copy, readonly) DLRequest *(^then)(void(^block)(id data, id *returnValue));
+@property (nonatomic, copy, readonly) DLRequest *(^failure)(void(^block)(id data, id *returnValue));
 
 
 
