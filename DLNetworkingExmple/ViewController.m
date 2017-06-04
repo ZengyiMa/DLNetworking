@@ -45,11 +45,12 @@
 
 - (void)basicGet
 {
-    DLRequest.get
-    .url(@"https://httpbin.org/get")
-    .send()
-    .then({
+    DLRequest.new
+    .get(@"https://httpbin.org/get")
+    .sendRequest()
+    .then(^(id data, id *retval) {
         [self logName:@"basicGet" info:data];
+//        *retval = data[@"headers"];
     });
 }
 
@@ -58,10 +59,10 @@
 
 - (void)basicPost
 {
-    DLRequest.post
-    .url(@"https://httpbin.org/post")
-    .send()
-    .then({
+    DLRequest.new
+    .post(@"https://httpbin.org/post")
+    .sendRequest()
+    .then(^(id data, id *retval) {
         [self logName:@"basicPost" info:data];
     });
 }

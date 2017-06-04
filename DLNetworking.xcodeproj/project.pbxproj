@@ -20,7 +20,6 @@
 		6D8FAEE71E1179A20087E091 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE01E1179A20087E091 /* AFURLResponseSerialization.m */; };
 		6D8FAEE81E1179A20087E091 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE21E1179A20087E091 /* AFURLSessionManager.m */; };
 		6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEEA1E1179FD0087E091 /* DLRequest.m */; };
-		85491E9E1EBC82B800E7D22A /* DLNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 85491E9D1EBC82B800E7D22A /* DLNetworkManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +49,6 @@
 		6D8FAEE91E1179FD0087E091 /* DLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLRequest.h; sourceTree = "<group>"; };
 		6D8FAEEA1E1179FD0087E091 /* DLRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLRequest.m; sourceTree = "<group>"; };
 		85491E9B1EBC828A00E7D22A /* DLNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DLNetworking.h; sourceTree = "<group>"; };
-		85491E9C1EBC82B800E7D22A /* DLNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNetworkManager.h; sourceTree = "<group>"; };
-		85491E9D1EBC82B800E7D22A /* DLNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,8 +78,6 @@
 				6D8FAEE91E1179FD0087E091 /* DLRequest.h */,
 				6D8FAEEA1E1179FD0087E091 /* DLRequest.m */,
 				85491E9B1EBC828A00E7D22A /* DLNetworking.h */,
-				85491E9C1EBC82B800E7D22A /* DLNetworkManager.h */,
-				85491E9D1EBC82B800E7D22A /* DLNetworkManager.m */,
 			);
 			path = DLNetworking;
 			sourceTree = "<group>";
@@ -218,7 +213,6 @@
 				6D8FAEC21E1177ED0087E091 /* main.m in Sources */,
 				6D8FAEE51E1179A20087E091 /* AFSecurityPolicy.m in Sources */,
 				6D8FAEE61E1179A20087E091 /* AFURLRequestSerialization.m in Sources */,
-				85491E9E1EBC82B800E7D22A /* DLNetworkManager.m in Sources */,
 				6D8FAEE71E1179A20087E091 /* AFURLResponseSerialization.m in Sources */,
 				6D8FAEE31E1179A20087E091 /* AFHTTPSessionManager.m in Sources */,
 			);

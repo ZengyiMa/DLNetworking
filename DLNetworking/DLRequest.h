@@ -11,32 +11,9 @@
 @class DLRequest;
 
 
-
-
-
-
-#define then(code)               \
-thenBlock(^id(id data) {         \
-   id returnValue = nil;         \
-   code                          \
-return returnValue;              \
-})                               \
-
-#define error(code)               \
-errorBlock(^id(id data) {         \
-id returnValue = nil;            \
-code                             \
-return returnValue;              \
-})                               \
-
-
-
-
-
-
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 
-typedef id (^DLRequestHandleBlock)(id data);
+typedef void (^DLRequestHandleBlock)(id data, id *returnValue);
 typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
@@ -44,7 +21,9 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @property (nonatomic, assign) NSUInteger taskID;
 
 
-@property (nonatomic, copy, readonly) DLRequest *(^url)(NSString *url);
+@property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
+@property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
+
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 
@@ -52,17 +31,13 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @property (nonatomic, copy, readonly) DLRequest *(^jsonRequest)();
 
 
-// 请求方法
-+ (instancetype)get;
-+ (instancetype)post;
-
 // 发起请求
-- (DLRequestVoidBlock)send;
+- (DLRequestVoidBlock)sendRequest;
 
 
 // promise
-- (DLRequestBlock)thenBlock;
-- (DLRequestBlock)errorBlock;
+- (DLRequestBlock)then;
+- (DLRequestBlock)failure;
 
 
 

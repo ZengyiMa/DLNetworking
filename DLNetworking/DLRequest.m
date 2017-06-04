@@ -9,7 +9,6 @@
 #import "DLRequest.h"
 #import "AFNetworking.h"
 #import <objc/runtime.h>
-#import "DLNetworkManager.h"
 
 
 typedef NS_ENUM(NSUInteger, DLRequestMethod) {
@@ -19,9 +18,75 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 };
 
 
+#pragma mark - manager
+@interface DLNetworkManager : NSObject
+
+@property (nonatomic, assign) NSUInteger timeoutInterval;
+@property (nonatomic, strong) AFURLSessionManager *afManager;
+
+
+@property (nonatomic, strong) id<AFURLRequestSerialization> urlRequestSerialization;
+@property (nonatomic, strong) id<AFURLRequestSerialization> jsonRequestSerialization;
+
++ (instancetype)manager;
+
+@end
+
+
+@implementation DLNetworkManager
+
+
++ (instancetype)manager
+{
+    static DLNetworkManager *instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [self new];
+    });
+    return instance;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.timeoutInterval = 10;
+    }
+    return self;
+}
+
+- (AFURLSessionManager *)afManager
+{
+    if (!_afManager ) {
+        _afManager = [[AFURLSessionManager alloc]init];
+    }
+    return _afManager;
+}
+
+- (id<AFURLRequestSerialization>)urlRequestSerialization
+{
+    if (!_urlRequestSerialization) {
+        _urlRequestSerialization = [AFHTTPRequestSerializer serializer];
+    }
+    return _urlRequestSerialization;
+}
+
+- (id<AFURLRequestSerialization>)jsonRequestSerialization
+{
+    if (!_jsonRequestSerialization) {
+        _jsonRequestSerialization = [AFJSONRequestSerializer serializer];
+    }
+    return _jsonRequestSerialization;
+}
+
+
+@end
+
+
+
 
 @interface __DLRequestBlock : NSObject
-@property (nonatomic, copy) DLRequestBlock block;
+@property (nonatomic, copy) DLRequestHandleBlock block;
 @property (nonatomic, assign) BOOL isError;
 @end
 
@@ -83,26 +148,18 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 # pragma mark - method
 
 
-
-
-+ (instancetype)get
-{
-    DLRequest *request = [self new];
-    request.requestMethod = DLRequestMethodGet;
-    return request;
-}
-
-
-+ (instancetype)post
-{
-    DLRequest *request = [self new];
-    request.requestMethod = DLRequestMethodPost;
-    return request;
-}
-
-- (DLRequest *(^)(NSString *))url {
+- (DLRequest *(^)(NSString *))get {
     return ^(NSString *url) {
         self.requestUrl = url;
+        self.requestMethod = DLRequestMethodGet;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(NSString *))post {
+    return ^(NSString *url) {
+        self.requestUrl = url;
+        self.requestMethod = DLRequestMethodPost;
         return self;
     };
 }
@@ -132,7 +189,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 }
 
 #pragma mark - request
-- (DLRequestVoidBlock)send
+- (DLRequestVoidBlock)sendRequest
 {
     return ^()
     {
@@ -141,7 +198,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-- (DLRequestBlock)thenBlock
+- (DLRequestBlock)then
 {
     return ^(DLRequestHandleBlock block)
     {
@@ -154,7 +211,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-- (DLRequestBlock)errorBlock
+- (DLRequestBlock)failure
 {
     return ^(DLRequestHandleBlock block)
     {
@@ -179,29 +236,33 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
             // 是一个请求的
             reqeust = returnValue;
             if (block.isError) {
-                reqeust.errorBlock(block.block);
+                reqeust.failure(block.block);
             } else {
-                reqeust.thenBlock(block.block);
+                reqeust.then(block.block);
             }
             
         }
         else if (reqeust) {
             if (block.isError) {
-                reqeust.errorBlock(block.block);
+                reqeust.failure(block.block);
             } else {
-                reqeust.thenBlock(block.block);
+                reqeust.then(block.block);
             }
         }
         else {
             if (isError) {
                 if (block.isError) {
-                    returnValue = block.block(returnValue);
+                    id retVal = nil;
+                    block.block(returnValue, &retVal);
+                    returnValue = retVal == nil ? returnValue: retVal;
                 } else {
                     continue;
                 }
             } else {
                 if (!block.isError) {
-                    returnValue = block.block(returnValue);
+                    id retVal = nil;
+                    block.block(returnValue, &retVal);
+                    returnValue = retVal == nil ? returnValue: retVal;
                 }
                 else {
                     continue;
@@ -210,7 +271,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         }
     }
     if (reqeust) {
-        reqeust.send();
+        reqeust.sendRequest();
     }
     
 }

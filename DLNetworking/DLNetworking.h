@@ -10,6 +10,5 @@
 #define DLNetworking_h
 
 #import "DLRequest.h"
-#import "DLNetworkManager.h"
 
 #endif /* DLNetworking_h */
