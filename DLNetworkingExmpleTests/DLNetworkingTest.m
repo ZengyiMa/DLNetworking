@@ -51,4 +51,31 @@
     }
 }
 
+- (void)testBasicGet
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .sendRequest()
+        .then(^(id data, id *retval) {
+            [self logName:@"basicGet" info:data];
+            [expectation fulfill];
+        });
+        
+    }];
+}
+
+- (void)testBasicPost
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .sendRequest()
+        .then(^(id data, id *retval) {
+            [self logName:@"basicPost" info:data];
+            [expectation fulfill];
+        });
+    }];
+}
+
 @end
