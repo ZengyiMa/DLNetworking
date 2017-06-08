@@ -74,6 +74,22 @@
     }];
 }
 
+- (void)testRequestSerialization
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/post")
+        .parameters(@{@"p1":@"ok"})
+        .requestSerialization(DLRequestSerializationTypeJSON)
+        .sendRequest()
+        .then(^(id data, id *retval) {
+            [self logName:@"testRequestSerialization" info:data];
+//            XCTAssertTrue([data[@"args"][@"p1"] isEqualToString:@"ok"], @"");
+            [expectation fulfill];
+        });
+    }];
+}
+
 
 
 
@@ -87,7 +103,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:10 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:30 handler:^(NSError * _Nullable error) {
         }];
     }
 }
