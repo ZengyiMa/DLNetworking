@@ -24,15 +24,7 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
-
-
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
-
-
-
-
-// 将参数变为json字符串
-@property (nonatomic, copy, readonly) DLRequest *(^jsonRequest)();
 
 
 // 发起请求
