@@ -59,6 +59,21 @@
     }];
 }
 
+- (void)testParameters
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"p1":@"ok"})
+        .sendRequest()
+        .then(^(id data, id *retval) {
+            [self logName:@"testParameters" info:data];
+            XCTAssertTrue([data[@"args"][@"p1"] isEqualToString:@"ok"], @"");
+            [expectation fulfill];
+        });
+    }];
+}
+
 
 
 
