@@ -91,8 +91,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSDictionary *requestParameters;
 @property (nonatomic, strong) NSDictionary *requestHeaders;
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
+@property (nonatomic, strong) id<AFURLRequestSerialization> useRequestSerialization;
 
-@property (nonatomic, assign) BOOL isJsonRequest;
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
 
 @end
@@ -104,6 +104,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     self = [super init];
     if (self) {
         self.requestTimeOut = 10;
+        self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
     }
     return self;
 }
@@ -123,10 +124,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
     }
 
-    
-    id<AFURLRequestSerialization> requestSerialization = !self.isJsonRequest ? [DLNetworkManager manager].urlRequestSerialization : [DLNetworkManager manager].jsonRequestSerialization;
-    
-   NSURLSessionDataTask *dataTask = [[DLNetworkManager manager].afManager dataTaskWithRequest:[requestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+   NSURLSessionDataTask *dataTask = [[DLNetworkManager manager].afManager dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
        if (error) {
            [self responseWithData:error isError:YES];
        } else {
@@ -185,13 +183,18 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-- (DLRequest *(^)())jsonRequest
+- (DLRequest *(^)(DLRequestSerializationType))requestSerialization
 {
-    return ^() {
-        self.isJsonRequest = YES;
+    return ^(DLRequestSerializationType type) {
+        if (type == DLRequestSerializationTypeURL) {
+            self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
+        } else {
+            self.useRequestSerialization = [DLNetworkManager manager].jsonRequestSerialization;
+        }
         return self;
     };
 }
+
 
 #pragma mark - request
 - (DLRequestVoidBlock)sendRequest

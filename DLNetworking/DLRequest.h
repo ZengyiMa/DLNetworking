@@ -8,11 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+
+
+typedef NS_ENUM(NSUInteger, DLRequestSerializationType) {
+    DLRequestSerializationTypeURL,
+    DLRequestSerializationTypeJSON,
+};
+
+
+
+
 @class DLRequest;
-
-
 typedef DLRequest *(^DLRequestVoidBlock)(void);
-
 typedef void (^DLRequestHandleBlock)(id data, id *returnValue);
 typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
@@ -25,6 +32,7 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
+@property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
 
 
 // 发起请求
