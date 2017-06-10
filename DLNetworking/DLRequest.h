@@ -15,6 +15,11 @@ typedef NS_ENUM(NSUInteger, DLRequestSerializationType) {
     DLRequestSerializationTypeJSON,
 };
 
+typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
+    DLResponseSerializationTypeJSON,
+    DLResponseSerializationTypeDATA,
+};
+
 
 
 
@@ -29,10 +34,13 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 @property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
-@property (nonatomic, copy, readonly) DLRequest *(^parameters)(NSDictionary *parameters);
+@property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
 @property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
+
+@property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
+
 
 
 // 发起请求

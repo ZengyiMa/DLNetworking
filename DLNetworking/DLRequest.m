@@ -20,7 +20,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 #pragma mark - manager
 @interface DLNetworkManager : NSObject
-@property (nonatomic, strong) AFURLSessionManager *afManager;
+@property (nonatomic, strong) AFURLSessionManager *httpManager;
+@property (nonatomic, strong) AFURLSessionManager *jsonManager;
+
 @property (nonatomic, strong) id<AFURLRequestSerialization> urlRequestSerialization;
 @property (nonatomic, strong) id<AFURLRequestSerialization> jsonRequestSerialization;
 + (instancetype)manager;
@@ -47,15 +49,25 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return self;
 }
 
-- (AFURLSessionManager *)afManager
+- (AFURLSessionManager *)httpManager
 {
-    if (!_afManager ) {
-        _afManager = [[AFURLSessionManager alloc]init];
+    if (!_httpManager ) {
+        _httpManager = [[AFURLSessionManager alloc]init];
+        [_httpManager setResponseSerializer:[AFHTTPResponseSerializer serializer]];
+
     }
-    return _afManager;
+    return _httpManager;
 }
 
-- (id<AFURLRequestSerialization>)urlRequestSerialization
+- (AFURLSessionManager *)jsonManager
+{
+    if (!_jsonManager) {
+        _jsonManager = [[AFURLSessionManager alloc]init];
+    }
+    return _jsonManager;
+}
+
+- (AFHTTPRequestSerializer<AFURLRequestSerialization> *)urlRequestSerialization
 {
     if (!_urlRequestSerialization) {
         _urlRequestSerialization = [AFHTTPRequestSerializer serializer];
@@ -63,7 +75,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return _urlRequestSerialization;
 }
 
-- (id<AFURLRequestSerialization>)jsonRequestSerialization
+- (AFHTTPRequestSerializer<AFURLRequestSerialization> *)jsonRequestSerialization
 {
     if (!_jsonRequestSerialization) {
         _jsonRequestSerialization = [AFJSONRequestSerializer serializer];
@@ -86,12 +98,16 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 
 @interface DLRequest ()
+
+
+@property (nonatomic, strong) AFURLSessionManager *sessionManage;
+
 @property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
-@property (nonatomic, strong) NSDictionary *requestParameters;
+@property (nonatomic, strong) id requestParameters;
 @property (nonatomic, strong) NSDictionary *requestHeaders;
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
-@property (nonatomic, strong) id<AFURLRequestSerialization> useRequestSerialization;
+@property (nonatomic, strong) AFHTTPRequestSerializer<AFURLRequestSerialization> *useRequestSerialization;
 
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
 
@@ -103,6 +119,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     self = [super init];
     if (self) {
+        self.sessionManage = [DLNetworkManager manager].jsonManager;
         self.requestTimeOut = 10;
         self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
     }
@@ -124,7 +141,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
     }
 
-   NSURLSessionDataTask *dataTask = [[DLNetworkManager manager].afManager dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+   NSURLSessionDataTask *dataTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
        if (error) {
            [self responseWithData:error isError:YES];
        } else {
@@ -138,10 +155,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 
 
-
-
 # pragma mark - method
-
 
 - (DLRequest *(^)(NSString *))get {
     return ^(NSString *url) {
@@ -159,9 +173,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
-- (DLRequest *(^)(NSDictionary *))parameters
+- (DLRequest *(^)(id))parameters
 {
-    return ^(NSDictionary *parameters) {
+    return ^(id parameters) {
         self.requestParameters = parameters;
         return self;
     };
@@ -188,8 +202,21 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(DLRequestSerializationType type) {
         if (type == DLRequestSerializationTypeURL) {
             self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
+            
         } else {
             self.useRequestSerialization = [DLNetworkManager manager].jsonRequestSerialization;
+        }
+        return self;
+    };
+}
+
+- (DLRequest *(^)(DLResponseSerializationType))responseSerialization
+{
+    return ^(DLResponseSerializationType type) {
+        if (type == DLResponseSerializationTypeDATA) {
+            self.sessionManage = [DLNetworkManager manager].httpManager;
+        } else if (type == DLResponseSerializationTypeJSON){
+            self.sessionManage = [DLNetworkManager manager].jsonManager;
         }
         return self;
     };
@@ -225,7 +252,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(DLRequestHandleBlock block)
     {
         if (block) {
-            
             __DLRequestBlock *_block = [__DLRequestBlock new];
             _block.block = block;
             _block.isError = YES;
