@@ -90,6 +90,23 @@
     }];
 }
 
+- (void)testResponseSerialization
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .responseSerialization(DLResponseSerializationTypeDATA)
+        .sendRequest()
+        .then(^(id data, id *retval) {
+            NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+            [self logName:@"testResponseSerialization" info:dataStr];
+            XCTAssertTrue(dataStr.length != 0, @"");
+            [expectation fulfill];
+        });
+    }];
+}
+
+
 
 
 
