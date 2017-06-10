@@ -78,14 +78,14 @@
 {
     [self networkTest:^(XCTestExpectation *expectation) {
         DLRequest.new
-        .get(@"https://httpbin.org/post")
-        .parameters(@{@"p1":@"ok"})
+        .post(@"https://httpbin.org/post")
+        .parameters(@[@"1",@"2"])
         .requestSerialization(DLRequestSerializationTypeJSON)
         .sendRequest()
         .then(^(id data, id *retval) {
             [self logName:@"testRequestSerialization" info:data];
-//            XCTAssertTrue([data[@"args"][@"p1"] isEqualToString:@"ok"], @"");
-            [expectation fulfill];
+            XCTAssertTrue([data[@"data"] isEqualToString:@"[\"1\",\"2\"]"], @"");
+             [expectation fulfill];
         });
     }];
 }
@@ -103,7 +103,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:30 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:10 handler:^(NSError * _Nullable error) {
         }];
     }
 }
