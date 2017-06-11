@@ -149,7 +149,6 @@
     [self networkTest:^(XCTestExpectation *expectation) {
         DLRequest.new
         .get(@"https://httpbin.org/404")
-        .parameters(@{@"a":@"b"})
         .sendRequest()
         .then(^(NSDictionary *data, DLRequestContext *context) {
             XCTAssertTrue(NO, @"");
@@ -161,6 +160,29 @@
         .failure(^(NSString *data, DLRequestContext *context) {
             XCTAssertTrue([data isEqualToString:@"Request failed: not found (404)"], @"");
             [expectation fulfill];
+        });
+        
+    }];
+}
+
+- (void)testThenStopPropagate
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            // 如果没设置，那么将会断言失败。
+            [context stopPropagate];
+            XCTAssertTrue(YES, @"");
+            [expectation fulfill];
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            XCTAssertTrue(NO, @"");
+
         });
         
     }];

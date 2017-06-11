@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 @implementation DLRequestContext
 
-- (void)stopRequest
+- (void)stopPropagate
 {
     self.stop = YES;
 }

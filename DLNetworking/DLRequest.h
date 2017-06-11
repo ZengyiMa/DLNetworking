@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 
 @interface DLRequestContext : NSObject
-- (void)stopRequest;
+- (void)stopPropagate;
 - (void)setReturnValue:(id)data;
 @end
 
