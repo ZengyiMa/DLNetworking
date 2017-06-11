@@ -143,18 +143,15 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
     }
 
-   NSURLSessionDataTask *dataTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+   self.task = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
        if (error) {
            [self responseWithData:error isError:YES];
        } else {
             [self responseWithData:responseObject isError:NO];
        }
     }];
-    [dataTask resume];
-   self.taskID = dataTask.taskIdentifier;
+    [self.task resume];
 }
-
-
 
 
 # pragma mark - method

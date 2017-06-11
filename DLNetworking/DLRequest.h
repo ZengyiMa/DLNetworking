@@ -30,7 +30,7 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
 @interface DLRequest : NSObject
-@property (nonatomic, assign) NSUInteger taskIdentifier;
+@property (nonatomic, assign, readonly) NSUInteger taskIdentifier;
 
 @property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
