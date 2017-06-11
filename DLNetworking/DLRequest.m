@@ -22,7 +22,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @interface DLNetworkManager : NSObject
 @property (nonatomic, strong) AFURLSessionManager *httpManager;
 @property (nonatomic, strong) AFURLSessionManager *jsonManager;
-
 @property (nonatomic, strong) id<AFURLRequestSerialization> urlRequestSerialization;
 @property (nonatomic, strong) id<AFURLRequestSerialization> jsonRequestSerialization;
 + (instancetype)manager;
@@ -101,6 +100,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 
 @property (nonatomic, strong) AFURLSessionManager *sessionManage;
+
+@property (nonatomic, weak) NSURLSessionTask *task;
+
 
 @property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
@@ -222,6 +224,17 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
+- (NSUInteger)taskIdentifier
+{
+    return self.task.taskIdentifier;
+}
+
+- (void (^)())cancel
+{
+    return ^() {
+        [self.task cancel];
+    };
+}
 
 #pragma mark - request
 - (DLRequestVoidBlock)sendRequest
