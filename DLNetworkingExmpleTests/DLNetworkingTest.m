@@ -17,11 +17,12 @@
 
 - (void)testBasicGet
 {
+    
     [self networkTest:^(XCTestExpectation *expectation) {
         DLRequest.new
         .get(@"https://httpbin.org/get")
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             [self logName:@"basicGet" info:data];
             XCTAssertTrue(YES, @"");
             [expectation fulfill];
@@ -36,7 +37,7 @@
         DLRequest.new
         .post(@"https://httpbin.org/post")
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             [self logName:@"basicPost" info:data];
             XCTAssertTrue(YES, @"");
             [expectation fulfill];
@@ -51,7 +52,7 @@
         .get(@"https://httpbin.org/get")
         .headers(@{@"header":@"ok"})
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             [self logName:@"testHeader" info:data];
             XCTAssertTrue([data[@"headers"][@"Header"] isEqualToString:@"ok"], @"");
             [expectation fulfill];
@@ -66,7 +67,7 @@
         .get(@"https://httpbin.org/get")
         .parameters(@{@"p1":@"ok"})
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             [self logName:@"testParameters" info:data];
             XCTAssertTrue([data[@"args"][@"p1"] isEqualToString:@"ok"], @"");
             [expectation fulfill];
@@ -82,7 +83,7 @@
         .parameters(@[@"1",@"2"])
         .requestSerialization(DLRequestSerializationTypeJSON)
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             [self logName:@"testRequestSerialization" info:data];
             XCTAssertTrue([data[@"data"] isEqualToString:@"[\"1\",\"2\"]"], @"");
              [expectation fulfill];
@@ -97,7 +98,7 @@
         .post(@"https://httpbin.org/post")
         .responseSerialization(DLResponseSerializationTypeDATA)
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
             [self logName:@"testResponseSerialization" info:dataStr];
             XCTAssertTrue(dataStr.length != 0, @"");
@@ -112,11 +113,11 @@
        DLRequest *request = DLRequest.new
         .get(@"https://httpbin.org/delay/10")
         .sendRequest()
-        .then(^(id data, id *retval) {
+        .then(^(id data, DLRequestContext *context) {
             XCTAssertTrue(NO, @"");
             [expectation fulfill];
             
-        }).failure(^(NSError *data, id *retval) {
+        }).failure(^(NSError *data, DLRequestContext *context) {
             XCTAssertTrue([data.userInfo[@"NSLocalizedDescription"] isEqualToString:@"cancelled"], @"");
             [expectation fulfill];
 

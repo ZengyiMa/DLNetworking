@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 
+@class DLRequest;
+
 
 typedef NS_ENUM(NSUInteger, DLRequestSerializationType) {
     DLRequestSerializationTypeURL,
@@ -22,10 +24,15 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 
 
+@interface DLRequestContext : NSObject
+- (void)stopRequest;
+- (void)setReturnValue:(id)data;
+@end
 
-@class DLRequest;
+
+
 typedef DLRequest *(^DLRequestVoidBlock)(void);
-typedef void (^DLRequestHandleBlock)(id data, id *returnValue);
+typedef void (^DLRequestHandleBlock)(id data, DLRequestContext *context);
 typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
@@ -41,6 +48,7 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 @property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
 
+
 @property (nonatomic, copy, readonly) void (^cancel)();
 
 
@@ -49,8 +57,8 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
 // promise
-@property (nonatomic, copy, readonly) DLRequest *(^then)(void(^block)(id data, id *returnValue));
-@property (nonatomic, copy, readonly) DLRequest *(^failure)(void(^block)(id data, id *returnValue));
+@property (nonatomic, copy, readonly) DLRequest *(^then)(void(^block)(id data, DLRequestContext *context));
+@property (nonatomic, copy, readonly) DLRequest *(^failure)(void(^block)(id data, DLRequestContext *context));
 
 
 

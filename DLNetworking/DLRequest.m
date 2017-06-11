@@ -18,6 +18,25 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 };
 
 
+@interface DLRequestContext ()
+@property (nonatomic, strong) id data;
+@property (nonatomic, assign) BOOL stop;
+@end
+
+@implementation DLRequestContext
+
+- (void)stopRequest
+{
+    self.stop = YES;
+}
+
+- (void)setReturnValue:(id)data
+{
+    self.data = data;
+}
+@end
+
+
 #pragma mark - manager
 @interface DLNetworkManager : NSObject
 @property (nonatomic, strong) AFURLSessionManager *httpManager;
@@ -297,17 +316,23 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
         else {
             if (isError) {
                 if (block.isError) {
-                    id retVal = nil;
-                    block.block(returnValue, &retVal);
-                    returnValue = retVal == nil ? returnValue: retVal;
+                    DLRequestContext *context = [DLRequestContext new];
+                    block.block(returnValue, context);
+                    if (context.stop) {
+                        break;
+                    }
+                    returnValue = context.data == nil ? returnValue: context.data;
                 } else {
                     continue;
                 }
             } else {
                 if (!block.isError) {
-                    id retVal = nil;
-                    block.block(returnValue, &retVal);
-                    returnValue = retVal == nil ? returnValue: retVal;
+                    DLRequestContext *context = [DLRequestContext new];
+                    block.block(returnValue, context);
+                    if (context.stop) {
+                        break;
+                    }
+                    returnValue = context.data == nil ? returnValue: context.data;
                 }
                 else {
                     continue;
