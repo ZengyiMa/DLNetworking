@@ -126,6 +126,24 @@
     }];
 }
 
+- (void)testChainThen
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            [context setReturnValue:data[@"args"]];
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            XCTAssertTrue([data[@"a"] isEqualToString:@"b"], @"");
+            [expectation fulfill];
+        });
+        
+    }];
+}
+
 
 
 
