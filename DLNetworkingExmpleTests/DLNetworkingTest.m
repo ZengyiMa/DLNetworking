@@ -106,6 +106,25 @@
     }];
 }
 
+- (void)testCancel
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+       DLRequest *request = DLRequest.new
+        .get(@"https://httpbin.org/delay/10")
+        .sendRequest()
+        .then(^(id data, id *retval) {
+            XCTAssertTrue(NO, @"");
+            [expectation fulfill];
+            
+        }).failure(^(NSError *data, id *retval) {
+            XCTAssertTrue([data.userInfo[@"NSLocalizedDescription"] isEqualToString:@"cancelled"], @"");
+            [expectation fulfill];
+
+        });
+        request.cancel();
+    }];
+}
+
 
 
 
