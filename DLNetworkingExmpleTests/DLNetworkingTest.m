@@ -126,7 +126,7 @@
     }];
 }
 
-- (void)testChainThen
+- (void)testThenChain
 {
     [self networkTest:^(XCTestExpectation *expectation) {
         DLRequest.new
@@ -138,6 +138,28 @@
         })
         .then(^(NSDictionary *data, DLRequestContext *context) {
             XCTAssertTrue([data[@"a"] isEqualToString:@"b"], @"");
+            [expectation fulfill];
+        });
+        
+    }];
+}
+
+- (void)testFailureChain
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/404")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            XCTAssertTrue(NO, @"");
+            [expectation fulfill];
+        })
+        .failure(^(NSError *data, DLRequestContext *context) {
+            [context setReturnValue:data.userInfo[@"NSLocalizedDescription"]];
+        })
+        .failure(^(NSString *data, DLRequestContext *context) {
+            XCTAssertTrue([data isEqualToString:@"Request failed: not found (404)"], @"");
             [expectation fulfill];
         });
         
@@ -158,7 +180,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:10 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:15 handler:^(NSError * _Nullable error) {
         }];
     }
 }
