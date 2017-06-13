@@ -189,6 +189,25 @@
 }
 
 
+- (void)testChainRequest
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            [self logName:@"testChainRequest --- 1" info:data];
+            [context setReturnValue:DLRequest.new.get(@"https://httpbin.org/get").parameters(@{@"c":@"d"})];
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            [self logName:@"testChainRequest --- 2" info:data];
+            [expectation fulfill];
+        });
+    }];
+}
+
+
 
 
 
@@ -202,7 +221,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:15 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:60 handler:^(NSError * _Nullable error) {
         }];
     }
 }
