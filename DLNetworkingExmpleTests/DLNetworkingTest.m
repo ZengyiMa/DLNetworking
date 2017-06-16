@@ -207,6 +207,21 @@
     }];
 }
 
+- (void)testBatchRequests
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest *r1 = DLRequest.new.get(@"https://httpbin.org/get");
+        DLRequest *r2 = DLRequest.new.post(@"https://httpbin.org/post");
+        [DLRequest sendBatchRequests:@[r1, r2]].then(^(NSArray *data, DLRequestContext *context) {
+            if (data.count == 0) {
+                XCTAssertTrue(NO, @"");
+            }
+            [expectation fulfill];
+        });
+    }];
+
+}
+
 
 
 

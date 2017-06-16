@@ -24,10 +24,24 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 
 
+
+
+
+@interface DLRequestBatchResponse : NSObject
+@property (nonatomic, strong) DLRequest *request;
+@property (nonatomic, strong) id data;
+@property (nonatomic, assign) BOOL isFailure;
+
+@end
+
+
+// 返回的操作上下文
 @interface DLRequestContext : NSObject
 - (void)stopPropagate;
 - (void)setReturnValue:(id)data;
 @end
+
+
 
 
 
@@ -45,12 +59,8 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
 @property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
-
 @property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
-
-
 @property (nonatomic, copy, readonly) void (^cancel)();
-
 
 // 发起请求
 - (DLRequestVoidBlock)sendRequest;
@@ -62,6 +72,8 @@ typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
 
+// batch
++ (DLRequest *)sendBatchRequests:(NSArray<DLRequest *> *)requests;
 
 
 
