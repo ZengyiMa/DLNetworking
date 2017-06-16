@@ -23,17 +23,10 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 };
 
 
-
-
-
-
 @interface DLRequestBatchResponse : NSObject
-@property (nonatomic, strong) DLRequest *request;
 @property (nonatomic, strong) id data;
 @property (nonatomic, assign) BOOL isFailure;
-
 @end
-
 
 // 返回的操作上下文
 @interface DLRequestContext : NSObject
@@ -42,17 +35,14 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 @end
 
 
-
-
-
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 typedef void (^DLRequestHandleBlock)(id data, DLRequestContext *context);
 typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
 
 @interface DLRequest : NSObject
-@property (nonatomic, assign, readonly) NSUInteger taskIdentifier;
 
+@property (nonatomic, assign, readonly) NSUInteger taskIdentifier;
 @property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);

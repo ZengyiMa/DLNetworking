@@ -261,18 +261,14 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     dispatch_group_t g = dispatch_group_create();
     DLRequest *request = DLRequest.new;
     [requests enumerateObjectsUsingBlock:^(DLRequest * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        
         DLRequestBatchResponse *response = [DLRequestBatchResponse new];
         [responseArray addObject:response];
         dispatch_group_enter(g);
-        __weak DLRequest *weakReq = obj;
         obj.sendRequest().then(^(id data, DLRequestContext *context) {
-            response.request = weakReq;
             response.data = data;
             dispatch_group_leave(g);
         })
         .failure(^(id data, DLRequestContext *context) {
-            response.request = weakReq;
             response.isFailure = YES;
             response.data = data;
             dispatch_group_leave(g);
