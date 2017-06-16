@@ -17,6 +17,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     
 };
 
+@implementation DLRequestBatchResponse
+
+@end
 
 @interface DLRequestContext ()
 @property (nonatomic, strong) id data;
@@ -252,6 +255,36 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
++ (DLRequest *)sendBatchRequests:(NSArray<DLRequest *> *)requests
+{
+    NSMutableArray *responseArray = [NSMutableArray array];
+    dispatch_group_t g = dispatch_group_create();
+    DLRequest *request = DLRequest.new;
+    [requests enumerateObjectsUsingBlock:^(DLRequest * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        DLRequestBatchResponse *response = [DLRequestBatchResponse new];
+        [responseArray addObject:response];
+        dispatch_group_enter(g);
+        __weak DLRequest *weakReq = obj;
+        obj.sendRequest().then(^(id data, DLRequestContext *context) {
+            response.request = weakReq;
+            response.data = data;
+            dispatch_group_leave(g);
+        })
+        .failure(^(id data, DLRequestContext *context) {
+            response.request = weakReq;
+            response.isFailure = YES;
+            response.data = data;
+            dispatch_group_leave(g);
+        });
+    }];
+   
+    dispatch_group_notify(g, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [request responseWithData:responseArray isError:NO];
+    });
+    return request;
+}
+
 #pragma mark - request
 - (DLRequestVoidBlock)sendRequest
 {
@@ -295,7 +328,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     id returnValue = data;
     DLRequest *reqeust = nil;
     for (__DLRequestBlock *block in self.blocks) {
-        
         if (reqeust == nil &&  [returnValue isKindOfClass:[DLRequest class]]) {
             // 是一个请求的
             reqeust = returnValue;
@@ -345,7 +377,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     }
     
 }
-
 
 - (NSMutableArray *)blocks
 {
