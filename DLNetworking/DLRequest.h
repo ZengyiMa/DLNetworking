@@ -10,40 +10,45 @@
 
 
 @class DLRequest;
-
-
-typedef NS_ENUM(NSUInteger, DLRequestSerializationType) {
-    DLRequestSerializationTypeURL,
-    DLRequestSerializationTypeJSON,
-};
-
-typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
-    DLResponseSerializationTypeJSON,
-    DLResponseSerializationTypeDATA,
-};
-
-
-@interface DLRequestBatchResponse : NSObject
-@property (nonatomic, strong) id data;
-@property (nonatomic, assign) BOOL isFailure;
-@end
-
-// 返回的操作上下文
-@interface DLRequestContext : NSObject
-- (void)stopPropagate;
-- (void)setReturnValue:(id)data;
-@end
-
-
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 typedef void (^DLRequestHandleBlock)(id data, DLRequestContext *context);
 typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
 
+/// 请求序列化的类型
+typedef NS_ENUM(NSUInteger, DLRequestSerializationType) {
+    DLRequestSerializationTypeURL, /// 正常的初始化。
+    DLRequestSerializationTypeJSON, /// 转换成 json 请求
+};
 
+/// 回应的序列化类型
+typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
+    DLResponseSerializationTypeJSON, /// 转化成 json 格式
+    DLResponseSerializationTypeDATA, /// 原始的 data 格式
+};
+
+/// 批量的返回对象
+@interface DLRequestBatchResponse : NSObject
+@property (nonatomic, strong) id data; /// 返回值
+@property (nonatomic, assign) BOOL isFailure; /// 是否错误
+@end
+
+///  返回的操作上下文
+@interface DLRequestContext : NSObject
+- (void)stopPropagate; /// 停止 then 链的调研，直接结束
+- (void)setReturnValue:(id)data; /// 设置下一个 then 使用的返回值
+@end
+
+
+/// 请求对象
 @interface DLRequest : NSObject
 
+/// 请求网络对象的唯一标识
 @property (nonatomic, assign, readonly) NSUInteger taskIdentifier;
+
+/// 使用 get 方式
 @property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
+
+/// 使用 post 方式
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
