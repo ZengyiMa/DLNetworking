@@ -50,7 +50,9 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 /// 使用 post 方式
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
+// 传递的参数
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
+/// 添加请求头
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
 @property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
