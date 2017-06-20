@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import "DLNetworking.h"
+
 
 @class DLRequest;
 @class DLRequestContext;
-
 
 
 typedef DLRequest *(^DLRequestVoidBlock)(void);
@@ -29,19 +30,6 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
     DLResponseSerializationTypeJSON, /// 转化成 json 格式
     DLResponseSerializationTypeDATA, /// 原始的 data 格式
 };
-
-/// 批量的返回对象
-@interface DLRequestBatchResponse : NSObject
-@property (nonatomic, strong) id data; /// 返回值
-@property (nonatomic, assign) BOOL isFailure; /// 是否错误
-@end
-
-///  返回的操作上下文
-@interface DLRequestContext : NSObject
-- (void)stopPropagate; /// 停止 then 链的调研，直接结束
-- (void)setReturnValue:(id)data; /// 设置下一个 then 使用的返回值
-@end
-
 
 /// 请求对象
 @interface DLRequest : NSObject

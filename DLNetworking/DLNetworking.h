@@ -10,5 +10,8 @@
 #define DLNetworking_h
 
 #import "DLRequest.h"
+#import "DLNetworkBatchResponse.h"
+#import "DLNetworkConfig.h"
+#import "DLRequestContext.h"
 
 #endif /* DLNetworking_h */

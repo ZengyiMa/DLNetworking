@@ -22,6 +22,8 @@
 		6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEEA1E1179FD0087E091 /* DLRequest.m */; };
 		85A2788B1EE48181004AFC37 /* DLNetworkingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A2788A1EE48181004AFC37 /* DLNetworkingTest.m */; };
 		85DEDE8F1EF9743800906BF1 /* DLNetworkConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */; };
+		85DEDE921EF9756E00906BF1 /* DLNetworkBatchResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 85DEDE911EF9756E00906BF1 /* DLNetworkBatchResponse.m */; };
+		85DEDE951EF978D700906BF1 /* DLRequestContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 85DEDE941EF978D700906BF1 /* DLRequestContext.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +68,10 @@
 		85A2788A1EE48181004AFC37 /* DLNetworkingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkingTest.m; sourceTree = "<group>"; };
 		85DEDE8D1EF9743800906BF1 /* DLNetworkConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNetworkConfig.h; sourceTree = "<group>"; };
 		85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkConfig.m; sourceTree = "<group>"; };
+		85DEDE901EF9756E00906BF1 /* DLNetworkBatchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNetworkBatchResponse.h; sourceTree = "<group>"; };
+		85DEDE911EF9756E00906BF1 /* DLNetworkBatchResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkBatchResponse.m; sourceTree = "<group>"; };
+		85DEDE931EF978D700906BF1 /* DLRequestContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLRequestContext.h; sourceTree = "<group>"; };
+		85DEDE941EF978D700906BF1 /* DLRequestContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLRequestContext.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +111,10 @@
 				85491E9B1EBC828A00E7D22A /* DLNetworking.h */,
 				85DEDE8D1EF9743800906BF1 /* DLNetworkConfig.h */,
 				85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */,
+				85DEDE901EF9756E00906BF1 /* DLNetworkBatchResponse.h */,
+				85DEDE911EF9756E00906BF1 /* DLNetworkBatchResponse.m */,
+				85DEDE931EF978D700906BF1 /* DLRequestContext.h */,
+				85DEDE941EF978D700906BF1 /* DLRequestContext.m */,
 			);
 			path = DLNetworking;
 			sourceTree = "<group>";
@@ -274,6 +284,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				85DEDE8F1EF9743800906BF1 /* DLNetworkConfig.m in Sources */,
+				85DEDE921EF9756E00906BF1 /* DLNetworkBatchResponse.m in Sources */,
+				85DEDE951EF978D700906BF1 /* DLRequestContext.m in Sources */,
 				6D8FAEE81E1179A20087E091 /* AFURLSessionManager.m in Sources */,
 				6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */,
 				6D8FAEC81E1177ED0087E091 /* ViewController.m in Sources */,

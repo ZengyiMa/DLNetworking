@@ -17,27 +17,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     
 };
 
-@implementation DLRequestBatchResponse
 
-@end
 
-@interface DLRequestContext ()
-@property (nonatomic, strong) id data;
-@property (nonatomic, assign) BOOL stop;
-@end
-
-@implementation DLRequestContext
-
-- (void)stopPropagate
-{
-    self.stop = YES;
-}
-
-- (void)setReturnValue:(id)data
-{
-    self.data = data;
-}
-@end
 
 
 #pragma mark - manager
@@ -261,7 +242,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     dispatch_group_t g = dispatch_group_create();
     DLRequest *request = DLRequest.new;
     [requests enumerateObjectsUsingBlock:^(DLRequest * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        DLRequestBatchResponse *response = [DLRequestBatchResponse new];
+        DLNetworkBatchResponse *response = [DLNetworkBatchResponse new];
         [responseArray addObject:response];
         dispatch_group_enter(g);
         obj.sendRequest().then(^(id data, DLRequestContext *context) {

@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface DLNetworkConfig : NSObject
 
 
-+ (DLNetworkConfig)sharedInstance;
++ (DLNetworkConfig *)sharedInstance;
 
 
 @property (nonatomic, assign) NSTimeInterval timeOut;

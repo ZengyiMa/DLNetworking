@@ -10,7 +10,7 @@
 
 @implementation DLNetworkConfig
 
-+ (DLNetworkConfig)sharedInstance
++ (DLNetworkConfig *)sharedInstance
 {
     static DLNetworkConfig *config;
     static dispatch_once_t onceToken;
