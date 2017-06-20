@@ -21,6 +21,7 @@
 		6D8FAEE81E1179A20087E091 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE21E1179A20087E091 /* AFURLSessionManager.m */; };
 		6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEEA1E1179FD0087E091 /* DLRequest.m */; };
 		85A2788B1EE48181004AFC37 /* DLNetworkingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A2788A1EE48181004AFC37 /* DLNetworkingTest.m */; };
+		85DEDE8F1EF9743800906BF1 /* DLNetworkConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,8 @@
 		85A278801EE47C9C004AFC37 /* DLNetworkingExmpleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DLNetworkingExmpleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		85A278841EE47C9C004AFC37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85A2788A1EE48181004AFC37 /* DLNetworkingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkingTest.m; sourceTree = "<group>"; };
+		85DEDE8D1EF9743800906BF1 /* DLNetworkConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNetworkConfig.h; sourceTree = "<group>"; };
+		85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkConfig.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +103,8 @@
 				6D8FAEE91E1179FD0087E091 /* DLRequest.h */,
 				6D8FAEEA1E1179FD0087E091 /* DLRequest.m */,
 				85491E9B1EBC828A00E7D22A /* DLNetworking.h */,
+				85DEDE8D1EF9743800906BF1 /* DLNetworkConfig.h */,
+				85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */,
 			);
 			path = DLNetworking;
 			sourceTree = "<group>";
@@ -268,6 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85DEDE8F1EF9743800906BF1 /* DLNetworkConfig.m in Sources */,
 				6D8FAEE81E1179A20087E091 /* AFURLSessionManager.m in Sources */,
 				6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */,
 				6D8FAEC81E1177ED0087E091 /* ViewController.m in Sources */,
@@ -563,6 +569,7 @@
 				85A278891EE47C9C004AFC37 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

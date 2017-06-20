@@ -10,6 +10,10 @@
 
 
 @class DLRequest;
+@class DLRequestContext;
+
+
+
 typedef DLRequest *(^DLRequestVoidBlock)(void);
 typedef void (^DLRequestHandleBlock)(id data, DLRequestContext *context);
 typedef DLRequest *(^DLRequestBlock)(DLRequestHandleBlock block);
