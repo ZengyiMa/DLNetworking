@@ -1,7 +1,7 @@
 # DLNetworking
  DLNetworking 是仿照 JS 的 Promise 链式写法，传统的 Block 回调如果在接口调用多的情况下会出现回调地狱（Callback Hell）的情况。
  如下代码所示
- 
+
  ```
  a(function() {
     b(function() {
@@ -15,9 +15,9 @@
     });
 });
  ```
- 
+
  使用 Promise 之后可以平铺开回调
- 
+
  ```
  a()
 .then(resolve=> {...})
@@ -26,23 +26,76 @@
 # 特性
  * [x] 支持 Promise 的写法
  * [x] 链式调用
- * [ ] 统一设置服务器地址 
- 
+ * [x] Get
+ * [x] Post
+ * [x] 链式传递的 then 语法
+ * [x] 链式传递的 fail 语法
+ * [x] 取消请求
+ * [x] 批量请求
+ * [x] 单独设置 timeOut
+ * [ ] https 接口
+ * [ ] 下载
+ * [ ] 上传
+ * [ ] 提供请求前的处理，请求后的处理
+ * [ ] 统一的配置中心，如 baseUrl，timeOut等
+ * [ ] 缓存
+
 # 使用
-可以使用如何实例代码发起请求
+
+## 基本使用
+
+### get
+```
+DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        });
+```
+then 里面代表是成功请求，data 为请求回来的数据。
+
+### Post
+```
+DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+
+        });
 
 ```
-    DLRequest.get(@"https://httpbin.org/get").send().then(^id(id data){
-        NSLog(@"response = %@", data);
-        return DLRequest.get(@"https://httpbin.org/get?a=b");
-    }).then(^id(id data) {
-        NSLog(@"scond response = %@", data);
-        return data[@"headers"];
-    }).then(^id(id data){
-        NSLog(@"scond header = %@", data);
-        return nil;
-    });
+### 处理成功和错误请求
 ```
-这里展示的是调用 2 个接口的情况，每一个 then 的返回值可以传递给下一个参数，进一步做数据的流向。
- 
+DLRequest.new
+        .post(@"https://404.org/post")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        })
+        .failure(^(NSError *data, DLRequestContext *context) {
+        });
 
+```
+failure 为失败的内容，data 为 error
+
+### header
+```
+DLRequest.new
+       .get(@"https://httpbin.org/get")
+       .headers(@{@"header":@"ok"})
+       .sendRequest()
+       .then(^(id data, DLRequestContext *context) {
+       });
+```
+
+### parameters
+
+```
+DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"p1":@"ok"})
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        });
+```
+
+未完待续
