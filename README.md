@@ -1,3 +1,6 @@
+
+# **这是我心中网络请求应该的样子**
+
 # DLNetworking
  DLNetworking 是仿照 JS 的 Promise 链式写法，传统的 Block 回调如果在接口调用多的情况下会出现回调地狱（Callback Hell）的情况。
  如下代码所示
@@ -39,6 +42,11 @@
  * [ ] 提供请求前的处理，请求后的处理
  * [ ] 统一的配置中心，如 baseUrl，timeOut等
  * [ ] 缓存
+
+
+# 集成
+ 1、 复制文件夹到项目
+ 2、 CocoaPods （TODO）
 
 # 使用
 
