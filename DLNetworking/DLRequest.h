@@ -56,7 +56,11 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 
 // promise
+
+/// 成功的回调
 @property (nonatomic, copy, readonly) DLRequest *(^then)(void(^block)(id data, DLRequestContext *context));
+
+/// 失败的回调
 @property (nonatomic, copy, readonly) DLRequest *(^failure)(void(^block)(id data, DLRequestContext *context));
 
 
