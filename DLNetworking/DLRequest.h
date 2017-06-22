@@ -51,12 +51,18 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 @property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
 @property (nonatomic, copy, readonly) void (^cancel)();
 
+/// 会在开始前被调用
+@property (nonatomic, copy) DLRequest *(^willStartRequest)();
+
+/// 会在结束的时候调用
+@property (nonatomic, copy) DLRequest *(^didFinishedRequest)();
+
+
 // 发起请求
 - (DLRequestVoidBlock)sendRequest;
 
 
 // promise
-
 /// 成功的回调
 @property (nonatomic, copy, readonly) DLRequest *(^then)(void(^block)(id data, DLRequestContext *context));
 

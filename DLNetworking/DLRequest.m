@@ -100,22 +100,15 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 
 @interface DLRequest ()
-
-
 @property (nonatomic, strong) AFURLSessionManager *sessionManage;
-
 @property (nonatomic, weak) NSURLSessionTask *task;
-
-
 @property (nonatomic, assign) DLRequestMethod requestMethod;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) id requestParameters;
 @property (nonatomic, strong) NSDictionary *requestHeaders;
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 @property (nonatomic, strong) AFHTTPRequestSerializer<AFURLRequestSerialization> *useRequestSerialization;
-
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
-
 @end
 
 @implementation DLRequest
@@ -134,6 +127,10 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 - (void)requestNetwork
 {
+    
+    if (self.willStartRequest) {
+        self.willStartRequest();
+    }
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
     urlRequest.timeoutInterval = self.requestTimeOut;
     if (self.requestMethod == DLRequestMethodGet) {
@@ -145,12 +142,12 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     if (self.requestHeaders) {
         [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
     }
-
+    
    self.task = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
        if (error) {
            [self responseWithData:error isError:YES];
        } else {
-            [self responseWithData:responseObject isError:NO];
+           [self responseWithData:responseObject isError:NO];
        }
     }];
     [self.task resume];
@@ -204,7 +201,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(DLRequestSerializationType type) {
         if (type == DLRequestSerializationTypeURL) {
             self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
-            
         } else {
             self.useRequestSerialization = [DLNetworkManager manager].jsonRequestSerialization;
         }
@@ -255,7 +251,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
             dispatch_group_leave(g);
         });
     }];
-   
     dispatch_group_notify(g, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [request responseWithData:responseArray isError:NO];
     });
@@ -304,6 +299,20 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     id returnValue = data;
     DLRequest *reqeust = nil;
+    
+    __weak DLRequest *weakReq = self;
+    if (self.didFinishedRequest) {
+        if (isError) {
+            self.failure(^(id data, DLRequestContext *context) {
+                weakReq.didFinishedRequest();
+            });
+        } else {
+           self.then(^(id data, DLRequestContext *context) {
+               weakReq.didFinishedRequest();
+           });
+        }
+    }
+    
     for (__DLRequestBlock *block in self.blocks) {
         if (reqeust == nil &&  [returnValue isKindOfClass:[DLRequest class]]) {
             // 是一个请求的
@@ -313,7 +322,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
             } else {
                 reqeust.then(block.block);
             }
-            
         }
         else if (reqeust) {
             if (block.isError) {
