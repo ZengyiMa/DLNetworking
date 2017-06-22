@@ -56,7 +56,6 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     if (!_httpManager ) {
         _httpManager = [[AFURLSessionManager alloc]init];
         [_httpManager setResponseSerializer:[AFHTTPResponseSerializer serializer]];
-
     }
     return _httpManager;
 }
@@ -109,6 +108,10 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 @property (nonatomic, strong) AFHTTPRequestSerializer<AFURLRequestSerialization> *useRequestSerialization;
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
+
+@property (nonatomic, copy) void (^willStartBlock)();
+@property (nonatomic, copy) void (^didFinishedBlock)();
+
 @end
 
 @implementation DLRequest
@@ -128,8 +131,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 - (void)requestNetwork
 {
     
-    if (self.willStartRequest) {
-        self.willStartRequest();
+    if (self.willStartBlock) {
+        self.willStartBlock();
     }
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
     urlRequest.timeoutInterval = self.requestTimeOut;
@@ -267,6 +270,21 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     };
 }
 
+- (DLRequest *(^)(void (^)()))willStartRequest
+{
+    return ^(void(^block)()) {
+        self.willStartBlock = block;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(void (^)()))didFinishedRequest
+{
+    return ^(void(^block)()) {
+        self.didFinishedBlock = block;
+        return self;
+    };
+}
 
 - (DLRequestBlock)then
 {
@@ -301,14 +319,15 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     DLRequest *reqeust = nil;
     
     __weak DLRequest *weakReq = self;
-    if (self.didFinishedRequest) {
+    if (self.didFinishedBlock) {
         if (isError) {
             self.failure(^(id data, DLRequestContext *context) {
-                weakReq.didFinishedRequest();
+                
+                weakReq.didFinishedBlock();
             });
         } else {
            self.then(^(id data, DLRequestContext *context) {
-               weakReq.didFinishedRequest();
+               weakReq.didFinishedBlock();
            });
         }
     }
@@ -360,8 +379,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     if (reqeust) {
         reqeust.sendRequest();
     }
-    
 }
+
 
 - (NSMutableArray *)blocks
 {

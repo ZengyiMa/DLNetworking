@@ -52,10 +52,10 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 @property (nonatomic, copy, readonly) void (^cancel)();
 
 /// 会在开始前被调用
-@property (nonatomic, copy) DLRequest *(^willStartRequest)();
+@property (nonatomic, copy) DLRequest *(^willStartRequest)(void(^block)());
 
 /// 会在结束的时候调用
-@property (nonatomic, copy) DLRequest *(^didFinishedRequest)();
+@property (nonatomic, copy) DLRequest *(^didFinishedRequest)(void(^block)());
 
 
 // 发起请求
