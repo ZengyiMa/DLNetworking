@@ -219,7 +219,32 @@
             [expectation fulfill];
         });
     }];
+}
 
+- (void)testWillStart
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .willStartRequest(^{
+            [expectation fulfill];
+        })
+        .sendRequest();
+    }];
+}
+
+- (void)testDidFinish
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .didFinishedRequest(^{
+            [expectation fulfill];
+        });
+    }];
 }
 
 
@@ -236,7 +261,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:60 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:10 handler:^(NSError * _Nullable error) {
         }];
     }
 }
