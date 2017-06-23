@@ -46,6 +46,7 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
 /// 添加请求头
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
+/// 超时时间
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
 @property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
 @property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
