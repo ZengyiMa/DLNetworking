@@ -108,6 +108,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 @property (nonatomic, strong) AFHTTPRequestSerializer<AFURLRequestSerialization> *useRequestSerialization;
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
+@property (nonatomic, assign) BOOL isDownloadTask;
+@property (nonatomic, copy) NSString *dowloadDestination;
 
 @property (nonatomic, copy) void (^willStartBlock)();
 @property (nonatomic, copy) void (^didFinishedBlock)();
@@ -134,27 +136,51 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     if (self.willStartBlock) {
         self.willStartBlock();
     }
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
-    urlRequest.timeoutInterval = self.requestTimeOut;
-    if (self.requestMethod == DLRequestMethodGet) {
-        urlRequest.HTTPMethod = @"get";
-    } else if (self.requestMethod == DLRequestMethodPost) {
-        urlRequest.HTTPMethod = @"Post";
-    }
     
-    if (self.requestHeaders) {
-        [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
-    }
-    
-   self.task = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:urlRequest withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+   self.task = [self sessionTaskWithCompletionHandler:^(NSURLResponse *response, id  _Nullable responseObject, NSError * _Nullable error) {
        if (error) {
            [self responseWithData:error isError:YES];
        } else {
            [self responseWithData:responseObject isError:NO];
        }
-    }];
+   }];
     [self.task resume];
 }
+
+
+- (NSURLSessionTask *)sessionTaskWithCompletionHandler:(nullable void (^)(NSURLResponse *response, id _Nullable responseObject,  NSError * _Nullable error))completionHandler
+{
+    NSURLSessionTask *sessionTask = nil;
+    if (!self.isDownloadTask) {
+       sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:completionHandler];
+    } else {
+        sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:nil destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+            return [NSURL fileURLWithPath:self.dowloadDestination];
+        } completionHandler:completionHandler];
+    }
+    return sessionTask;
+}
+
+- (NSMutableURLRequest *)urlRequest
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
+    request.timeoutInterval = self.requestTimeOut;
+    if (self.requestMethod == DLRequestMethodGet) {
+        request.HTTPMethod = @"get";
+    } else if (self.requestMethod == DLRequestMethodPost) {
+        request.HTTPMethod = @"Post";
+    }
+    
+    if (self.requestHeaders) {
+        [request setAllHTTPHeaderFields:self.requestHeaders];
+    }
+    return request;
+
+}
+
+
+
+
 
 
 # pragma mark - method
@@ -171,6 +197,16 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(NSString *url) {
         self.requestUrl = url;
         self.requestMethod = DLRequestMethodPost;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(NSString *, NSString *))download {
+    return ^(NSString *url, NSString *destination) {
+        self.requestUrl = url;
+//        self.requestMethod = DLRequestMethodGet;
+        self.isDownloadTask = YES;
+        self.dowloadDestination = destination;
         return self;
     };
 }

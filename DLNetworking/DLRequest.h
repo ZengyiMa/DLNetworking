@@ -42,6 +42,13 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 /// 使用 post 方式
 @property (nonatomic, copy, readonly) DLRequest *(^post)(NSString *url);
+
+/// 下载方法
+@property (nonatomic, copy, readonly) DLRequest *(^download)(NSString *url, NSString *destination);
+
+
+
+
 // 传递的参数
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
 /// 添加请求头
