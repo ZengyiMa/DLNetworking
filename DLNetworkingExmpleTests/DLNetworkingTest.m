@@ -247,6 +247,22 @@
     }];
 }
 
+- (void)testDownload
+{
+    NSString *file = NSHomeDirectory();
+    file = [file stringByAppendingPathComponent:@"1.jpg"];
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .download(@"https://httpbin.org/image/png", file)
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            NSLog(@"download file path = %@", file);
+            [expectation fulfill];
+        });
+    }];
+}
+
+
 
 
 
