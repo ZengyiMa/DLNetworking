@@ -262,6 +262,24 @@
     }];
 }
 
+- (void)testDownloadProgress
+{
+    NSString *file = NSHomeDirectory();
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .download(@"https://httpbin.org/range/102400", file)
+        .progress(^(NSProgress *downloadProgress) {
+            NSLog(@"completedUnitCount = %lld, totalUnitCount = %lld", downloadProgress.completedUnitCount, downloadProgress.totalUnitCount);
+            if (downloadProgress.completedUnitCount == downloadProgress.totalUnitCount) {
+                [expectation fulfill];
+            }
+            
+        })
+        .sendRequest();
+    }];
+}
+
+
 
 
 
@@ -277,7 +295,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:10 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:20 handler:^(NSError * _Nullable error) {
         }];
     }
 }
