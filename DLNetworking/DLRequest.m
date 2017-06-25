@@ -113,6 +113,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 @property (nonatomic, copy) void (^willStartBlock)();
 @property (nonatomic, copy) void (^didFinishedBlock)();
+@property (nonatomic, copy) void (^progressBlock)(NSProgress *progress);
 
 @end
 
@@ -152,9 +153,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     NSURLSessionTask *sessionTask = nil;
     if (!self.isDownloadTask) {
-       sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:nil completionHandler:completionHandler];
+       sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:self.progressBlock completionHandler:completionHandler];
     } else {
-        sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:nil destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:self.progressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
             return [NSURL fileURLWithPath:self.dowloadDestination];
         } completionHandler:completionHandler];
     }
@@ -318,6 +319,14 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     return ^(void(^block)()) {
         self.didFinishedBlock = block;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(void (^)(NSProgress *)))progress
+{
+    return ^(void(^block)(NSProgress *)) {
+        self.progressBlock = block;
         return self;
     };
 }

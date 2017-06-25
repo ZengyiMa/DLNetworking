@@ -46,6 +46,7 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 /// 下载方法
 @property (nonatomic, copy, readonly) DLRequest *(^download)(NSString *url, NSString *destination);
 
+@property (nonatomic, copy, readonly) DLRequest *(^progress)(void (^block)(NSProgress *downloadProgress));
 
 
 
