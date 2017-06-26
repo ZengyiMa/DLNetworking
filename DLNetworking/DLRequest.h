@@ -49,6 +49,9 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 /// 下载进度的回调
 @property (nonatomic, copy, readonly) DLRequest *(^progress)(void (^block)(NSProgress *downloadProgress));
 
+/// 上传进度
+@property (nonatomic, copy, readonly) DLRequest *(^uploadProgress)(void (^block)(NSProgress *progress));
+
 
 // 传递的参数
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
@@ -71,7 +74,7 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 - (DLRequestVoidBlock)sendRequest;
 
 
-// promise
+#pragma mark - promise
 /// 成功的回调
 @property (nonatomic, copy, readonly) DLRequest *(^then)(void(^block)(id data, DLRequestContext *context));
 

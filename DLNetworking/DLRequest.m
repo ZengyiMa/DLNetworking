@@ -114,6 +114,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, copy) void (^willStartBlock)();
 @property (nonatomic, copy) void (^didFinishedBlock)();
 @property (nonatomic, copy) void (^progressBlock)(NSProgress *progress);
+@property (nonatomic, copy) void (^uploadprogressBlock)(NSProgress *progress);
 
 @end
 
@@ -153,7 +154,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     NSURLSessionTask *sessionTask = nil;
     if (!self.isDownloadTask) {
-       sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:nil downloadProgress:self.progressBlock completionHandler:completionHandler];
+        sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:self.uploadprogressBlock downloadProgress:self.progressBlock completionHandler:completionHandler];
     } else {
         sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:self.progressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
             return [NSURL fileURLWithPath:self.dowloadDestination];
@@ -327,6 +328,14 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     return ^(void(^block)(NSProgress *)) {
         self.progressBlock = block;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(void (^)(NSProgress *)))uploadProgress
+{
+    return ^(void(^block)(NSProgress *)) {
+        self.uploadprogressBlock  = block;
         return self;
     };
 }
