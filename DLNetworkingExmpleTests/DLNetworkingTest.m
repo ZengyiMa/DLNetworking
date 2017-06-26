@@ -279,23 +279,14 @@
     }];
 }
 
-- (void)testUploadProgress
+- (void)testUploadData
 {
     NSString *file = [[NSBundle mainBundle]pathForResource:@"test_data" ofType:@"data"];
         [self networkTest:^(XCTestExpectation *expectation) {
             DLRequest.new
-            .uploadFile(file, @"https://httpbin.org/anything")
-            .uploadProgress(^(NSProgress *progress) {
-                NSLog(@"completedUnitCount = %lld, totalUnitCount = %lld", progress.completedUnitCount, progress.totalUnitCount);
-                if (progress.completedUnitCount == progress.totalUnitCount) {
-                    [expectation fulfill];
-                }
-            })
+            .uploadData([NSData dataWithContentsOfFile:file], @"https://httpbin.org/post")
             .sendRequest()
             .then(^(id data, DLRequestContext *context) {
-                [expectation fulfill];
-            })
-            .failure(^(id data, DLRequestContext *context) {
                 [expectation fulfill];
             });
         }];
