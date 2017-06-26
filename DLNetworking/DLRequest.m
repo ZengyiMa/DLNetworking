@@ -256,6 +256,7 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 {
     return ^(NSString *fileUrl, NSString *url) {
         self.requestUrl = url;
+        self.requestMethod = DLRequestMethodPost;
         self.uploadUseData = fileUrl;
         self.requestType = DLRequestTypeUploadFile;
         return self;

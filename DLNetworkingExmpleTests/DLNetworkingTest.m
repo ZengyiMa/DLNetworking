@@ -292,22 +292,25 @@
         }];
 }
 
-//- (void)testUploadProgress
-//{
-//    [self networkTest:^(XCTestExpectation *expectation) {
-//        DLRequest.new
-//        .get(@"https://httpbin.org/get")
-//        .parameters(@{@"a":@"b"})
-//        .uploadProgress(^(NSProgress *progress) {
-//            NSLog(@"completedUnitCount = %lld, totalUnitCount = %lld", progress.completedUnitCount, progress.totalUnitCount);
-//            if (progress.completedUnitCount == progress.totalUnitCount) {
-//                [expectation fulfill];
-//            }
-//        })
-//        .sendRequest();
-//        
-//    }];
-//}
+- (void)testUploadProgress
+{
+    NSString *file = [[NSBundle mainBundle]pathForResource:@"test_data" ofType:@"data"];
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .uploadData([NSData dataWithContentsOfFile:file], @"https://httpbin.org/post")
+        .uploadProgress(^(NSProgress *progress) {
+            NSLog(@"completedUnitCount = %lld, totalUnitCount = %lld", progress.completedUnitCount, progress.totalUnitCount);
+            if (progress.completedUnitCount == progress.totalUnitCount) {
+                [expectation fulfill];
+            }
+        })
+        .sendRequest();
+        
+    }];
+}
+
+
+
 
 
 
