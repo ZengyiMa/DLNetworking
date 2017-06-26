@@ -18,6 +18,15 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 };
 
 
+typedef NS_ENUM(NSUInteger, DLRequestType) {
+    DLRequestTypeNormal,
+    DLRequestTypeDownload,
+    DLRequestTypeUploadFile,
+    DLRequestTypeUploadData,
+    DLRequestTypeUploadBlock,
+};
+
+
 
 
 
@@ -108,7 +117,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) NSMutableArray<__DLRequestBlock *> *blocks;
 @property (nonatomic, strong) AFHTTPRequestSerializer<AFURLRequestSerialization> *useRequestSerialization;
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
-@property (nonatomic, assign) BOOL isDownloadTask;
+
+@property (nonatomic, assign) DLRequestType requestType;
 
 @property (nonatomic, copy) NSString *dowloadDestination;
 
@@ -118,7 +128,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, copy) void (^uploadprogressBlock)(NSProgress *progress);
 
 // upload
-@property (nonatomic, copy) NSString *uploadFileUrl;
+@property (nonatomic, strong) id uploadUseData;
 
 
 @end
@@ -130,7 +140,7 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     self = [super init];
     if (self) {
         self.sessionManage = [DLNetworkManager manager].jsonManager;
-        self.requestTimeOut = 10;
+        self.requestTimeOut = 30;
         self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
     }
     return self;
@@ -158,19 +168,38 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 - (NSURLSessionTask *)sessionTaskWithCompletionHandler:(nullable void (^)(NSURLResponse *response, id _Nullable responseObject,  NSError * _Nullable error))completionHandler
 {
     NSURLSessionTask *sessionTask = nil;
-    if (self.uploadFileUrl.length > 0) {
-        // 文件上传
-        sessionTask = [self.sessionManage uploadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] fromFile:[NSURL fileURLWithPath:self.uploadFileUrl] progress:self.uploadprogressBlock completionHandler:completionHandler];
-        return sessionTask;
-    }
     
     
-    if (!self.isDownloadTask) {
-        sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:self.uploadprogressBlock downloadProgress:self.progressBlock completionHandler:completionHandler];
-    } else {
-        sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:self.progressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-            return [NSURL fileURLWithPath:self.dowloadDestination];
-        } completionHandler:completionHandler];
+    switch (self.requestType) {
+        case DLRequestTypeNormal:
+        {
+             sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:self.uploadprogressBlock downloadProgress:self.progressBlock completionHandler:completionHandler];
+        }
+           
+            break;
+        case DLRequestTypeDownload:
+        {
+            sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:self.progressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+                return [NSURL fileURLWithPath:self.dowloadDestination];
+            } completionHandler:completionHandler];
+        }
+           
+            break;
+        case DLRequestTypeUploadData:
+        {
+            sessionTask = [self.sessionManage uploadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] fromData:self.uploadUseData progress:self.uploadprogressBlock completionHandler:completionHandler];
+        }
+            break;
+        case DLRequestTypeUploadFile:
+        {
+            sessionTask = [self.sessionManage uploadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] fromFile:[NSURL fileURLWithPath:self.uploadUseData] progress:self.uploadprogressBlock completionHandler:completionHandler];
+
+        }
+                       break;
+        case DLRequestTypeUploadBlock:
+            break;
+        default:
+            break;
     }
     return sessionTask;
 }
@@ -192,17 +221,13 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 
 }
 
-
-
-
-
-
 # pragma mark - method
 
 - (DLRequest *(^)(NSString *))get {
     return ^(NSString *url) {
         self.requestUrl = url;
         self.requestMethod = DLRequestMethodGet;
+        self.requestType = DLRequestTypeNormal;
         return self;
     };
 }
@@ -211,6 +236,8 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
     return ^(NSString *url) {
         self.requestUrl = url;
         self.requestMethod = DLRequestMethodPost;
+        self.requestType = DLRequestTypeNormal;
+
         return self;
     };
 }
@@ -218,8 +245,9 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 - (DLRequest *(^)(NSString *, NSString *))download {
     return ^(NSString *url, NSString *destination) {
         self.requestUrl = url;
-        self.isDownloadTask = YES;
         self.dowloadDestination = destination;
+        self.requestType = DLRequestTypeDownload;
+
         return self;
     };
 }
@@ -228,7 +256,19 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 {
     return ^(NSString *fileUrl, NSString *url) {
         self.requestUrl = url;
-        self.uploadFileUrl = fileUrl;
+        self.uploadUseData = fileUrl;
+        self.requestType = DLRequestTypeUploadFile;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(NSData *, NSString *))uploadData
+{
+    return ^(NSData *data, NSString *url) {
+        self.requestUrl = url;
+        self.requestMethod = DLRequestMethodPost;
+        self.uploadUseData = data;
+        self.requestType = DLRequestTypeUploadData;
         return self;
     };
 }
