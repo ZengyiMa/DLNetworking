@@ -109,12 +109,17 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 @property (nonatomic, strong) AFHTTPRequestSerializer<AFURLRequestSerialization> *useRequestSerialization;
 @property (nonatomic, assign) NSTimeInterval requestTimeOut;
 @property (nonatomic, assign) BOOL isDownloadTask;
+
 @property (nonatomic, copy) NSString *dowloadDestination;
 
 @property (nonatomic, copy) void (^willStartBlock)();
 @property (nonatomic, copy) void (^didFinishedBlock)();
 @property (nonatomic, copy) void (^progressBlock)(NSProgress *progress);
 @property (nonatomic, copy) void (^uploadprogressBlock)(NSProgress *progress);
+
+// upload
+@property (nonatomic, copy) NSString *uploadFileUrl;
+
 
 @end
 
@@ -153,6 +158,13 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 - (NSURLSessionTask *)sessionTaskWithCompletionHandler:(nullable void (^)(NSURLResponse *response, id _Nullable responseObject,  NSError * _Nullable error))completionHandler
 {
     NSURLSessionTask *sessionTask = nil;
+    if (self.uploadFileUrl.length > 0) {
+        // 文件上传
+        sessionTask = [self.sessionManage uploadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] fromFile:[NSURL fileURLWithPath:self.uploadFileUrl] progress:self.uploadprogressBlock completionHandler:completionHandler];
+        return sessionTask;
+    }
+    
+    
     if (!self.isDownloadTask) {
         sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:self.uploadprogressBlock downloadProgress:self.progressBlock completionHandler:completionHandler];
     } else {
@@ -206,9 +218,17 @@ typedef NS_ENUM(NSUInteger, DLRequestMethod) {
 - (DLRequest *(^)(NSString *, NSString *))download {
     return ^(NSString *url, NSString *destination) {
         self.requestUrl = url;
-//        self.requestMethod = DLRequestMethodGet;
         self.isDownloadTask = YES;
         self.dowloadDestination = destination;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(NSString *, NSString *))uploadFile
+{
+    return ^(NSString *fileUrl, NSString *url) {
+        self.requestUrl = url;
+        self.uploadFileUrl = fileUrl;
         return self;
     };
 }
