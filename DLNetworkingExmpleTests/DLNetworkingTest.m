@@ -279,6 +279,45 @@
     }];
 }
 
+- (void)testUploadProgress
+{
+    NSString *file = [[NSBundle mainBundle]pathForResource:@"test_data" ofType:@"data"];
+        [self networkTest:^(XCTestExpectation *expectation) {
+            DLRequest.new
+            .uploadFile(file, @"https://httpbin.org/anything")
+            .uploadProgress(^(NSProgress *progress) {
+                NSLog(@"completedUnitCount = %lld, totalUnitCount = %lld", progress.completedUnitCount, progress.totalUnitCount);
+                if (progress.completedUnitCount == progress.totalUnitCount) {
+                    [expectation fulfill];
+                }
+            })
+            .sendRequest()
+            .then(^(id data, DLRequestContext *context) {
+                [expectation fulfill];
+            })
+            .failure(^(id data, DLRequestContext *context) {
+                [expectation fulfill];
+            });
+        }];
+}
+
+//- (void)testUploadProgress
+//{
+//    [self networkTest:^(XCTestExpectation *expectation) {
+//        DLRequest.new
+//        .get(@"https://httpbin.org/get")
+//        .parameters(@{@"a":@"b"})
+//        .uploadProgress(^(NSProgress *progress) {
+//            NSLog(@"completedUnitCount = %lld, totalUnitCount = %lld", progress.completedUnitCount, progress.totalUnitCount);
+//            if (progress.completedUnitCount == progress.totalUnitCount) {
+//                [expectation fulfill];
+//            }
+//        })
+//        .sendRequest();
+//        
+//    }];
+//}
+
 
 
 
@@ -295,7 +334,7 @@
     if (testBlock) {
         XCTestExpectation *exp = [self expectationWithDescription:@""];
         testBlock(exp);
-        [self waitForExpectationsWithTimeout:20 handler:^(NSError * _Nullable error) {
+        [self waitForExpectationsWithTimeout:60 handler:^(NSError * _Nullable error) {
         }];
     }
 }

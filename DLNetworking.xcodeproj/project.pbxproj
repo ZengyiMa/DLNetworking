@@ -20,6 +20,7 @@
 		6D8FAEE71E1179A20087E091 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE01E1179A20087E091 /* AFURLResponseSerialization.m */; };
 		6D8FAEE81E1179A20087E091 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEE21E1179A20087E091 /* AFURLSessionManager.m */; };
 		6D8FAEEB1E1179FD0087E091 /* DLRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8FAEEA1E1179FD0087E091 /* DLRequest.m */; };
+		8565B8331F016FEA00EA5B00 /* test_data.data in Resources */ = {isa = PBXBuildFile; fileRef = 8565B8321F016FEA00EA5B00 /* test_data.data */; };
 		85A2788B1EE48181004AFC37 /* DLNetworkingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A2788A1EE48181004AFC37 /* DLNetworkingTest.m */; };
 		85DEDE8F1EF9743800906BF1 /* DLNetworkConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 85DEDE8E1EF9743800906BF1 /* DLNetworkConfig.m */; };
 		85DEDE921EF9756E00906BF1 /* DLNetworkBatchResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 85DEDE911EF9756E00906BF1 /* DLNetworkBatchResponse.m */; };
@@ -63,6 +64,7 @@
 		6D8FAEE91E1179FD0087E091 /* DLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLRequest.h; sourceTree = "<group>"; };
 		6D8FAEEA1E1179FD0087E091 /* DLRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLRequest.m; sourceTree = "<group>"; };
 		85491E9B1EBC828A00E7D22A /* DLNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DLNetworking.h; sourceTree = "<group>"; };
+		8565B8321F016FEA00EA5B00 /* test_data.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_data.data; sourceTree = "<group>"; };
 		85A278801EE47C9C004AFC37 /* DLNetworkingExmpleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DLNetworkingExmpleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		85A278841EE47C9C004AFC37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85A2788A1EE48181004AFC37 /* DLNetworkingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNetworkingTest.m; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 		6D8FAEBF1E1177ED0087E091 /* DLNetworkingExmple */ = {
 			isa = PBXGroup;
 			children = (
+				8565B8321F016FEA00EA5B00 /* test_data.data */,
 				6D8FAEC31E1177ED0087E091 /* AppDelegate.h */,
 				6D8FAEC41E1177ED0087E091 /* AppDelegate.m */,
 				6D8FAEC61E1177ED0087E091 /* ViewController.h */,
@@ -265,6 +268,7 @@
 			files = (
 				6D8FAED01E1177ED0087E091 /* LaunchScreen.storyboard in Resources */,
 				6D8FAECD1E1177ED0087E091 /* Assets.xcassets in Resources */,
+				8565B8331F016FEA00EA5B00 /* test_data.data in Resources */,
 				6D8FAECB1E1177ED0087E091 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
