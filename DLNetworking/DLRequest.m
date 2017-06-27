@@ -7,7 +7,6 @@
 //
 
 #import "DLRequest.h"
-#import "AFNetworking.h"
 #import <objc/runtime.h>
 
 
@@ -130,6 +129,9 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 // upload
 @property (nonatomic, strong) id uploadUseData;
 
+// part
+@property (nonatomic, copy) void (^multipartFormDataBlock)();
+
 
 @end
 
@@ -173,27 +175,25 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     switch (self.requestType) {
         case DLRequestTypeNormal:
         {
-             sessionTask = [self.sessionManage dataTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] uploadProgress:self.uploadprogressBlock downloadProgress:self.progressBlock completionHandler:completionHandler];
+             sessionTask = [self.sessionManage dataTaskWithRequest:[self urlRequest] uploadProgress:self.uploadprogressBlock downloadProgress:self.progressBlock completionHandler:completionHandler];
         }
            
             break;
         case DLRequestTypeDownload:
         {
-            sessionTask = [self.sessionManage downloadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] progress:self.progressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+            sessionTask = [self.sessionManage downloadTaskWithRequest:[self urlRequest] progress:self.progressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
                 return [NSURL fileURLWithPath:self.dowloadDestination];
             } completionHandler:completionHandler];
         }
-           
             break;
         case DLRequestTypeUploadData:
         {
-            sessionTask = [self.sessionManage uploadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] fromData:self.uploadUseData progress:self.uploadprogressBlock completionHandler:completionHandler];
+            sessionTask = [self.sessionManage uploadTaskWithRequest:[self urlRequest] fromData:self.uploadUseData progress:self.uploadprogressBlock completionHandler:completionHandler];
         }
             break;
         case DLRequestTypeUploadFile:
         {
-            sessionTask = [self.sessionManage uploadTaskWithRequest:[self.useRequestSerialization requestBySerializingRequest:[self urlRequest] withParameters:self.requestParameters error:nil] fromFile:[NSURL fileURLWithPath:self.uploadUseData] progress:self.uploadprogressBlock completionHandler:completionHandler];
-
+            sessionTask = [self.sessionManage uploadTaskWithRequest:[self urlRequest] fromFile:[NSURL fileURLWithPath:self.uploadUseData] progress:self.uploadprogressBlock completionHandler:completionHandler];
         }
                        break;
         case DLRequestTypeUploadBlock:
@@ -204,9 +204,19 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     return sessionTask;
 }
 
-- (NSMutableURLRequest *)urlRequest
+- (NSURLRequest *)urlRequest
 {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
+    NSMutableURLRequest *request = nil;
+    if (self.multipartFormDataBlock) {
+        request = [self.useRequestSerialization multipartFormRequestWithMethod:@"post" URLString:self.requestUrl parameters:self.requestParameters constructingBodyWithBlock:self.multipartFormDataBlock error:nil];
+        request.timeoutInterval = self.requestTimeOut;
+        return request;
+
+    } else {
+        request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
+    }
+    
+    
     request.timeoutInterval = self.requestTimeOut;
     if (self.requestMethod == DLRequestMethodGet) {
         request.HTTPMethod = @"get";
@@ -217,8 +227,10 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     if (self.requestHeaders) {
         [request setAllHTTPHeaderFields:self.requestHeaders];
     }
-    return request;
-
+    
+  
+    return [self.useRequestSerialization requestBySerializingRequest:request withParameters:self.requestParameters error:nil];
+    
 }
 
 # pragma mark - method
@@ -278,6 +290,14 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 {
     return ^(id parameters) {
         self.requestParameters = parameters;
+        return self;
+    };
+}
+
+- (DLRequest *(^)(void (^)(id<AFMultipartFormData>)))multipartFormData
+{
+    return ^(void(^block)(id<AFMultipartFormData>)){
+        self.multipartFormDataBlock = block;
         return self;
     };
 }

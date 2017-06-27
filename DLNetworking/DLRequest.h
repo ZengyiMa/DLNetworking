@@ -7,9 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import "DLNetworking.h"
-
 
 @class DLRequest;
 @class DLRequestContext;
@@ -51,7 +49,6 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 @property (nonatomic, copy, readonly) DLRequest *(^uploadData)(NSData *data, NSString *toUrl);
 
-
 /// 下载进度的回调
 @property (nonatomic, copy, readonly) DLRequest *(^progress)(void (^block)(NSProgress *downloadProgress));
 
@@ -61,6 +58,15 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 // 传递的参数
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
+
+// 多文件的data
+@property (nonatomic, copy, readonly) DLRequest *(^multipartFormData)(void (^)(id <AFMultipartFormData> formData));
+
+
+// 传递的参数
+//@property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
+
+
 /// 添加请求头
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 /// 超时时间
