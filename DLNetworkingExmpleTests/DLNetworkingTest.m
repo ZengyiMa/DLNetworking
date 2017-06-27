@@ -309,6 +309,19 @@
     }];
 }
 
+- (void)testUploadFile
+{
+    NSString *file = [[NSBundle mainBundle]pathForResource:@"test_data" ofType:@"data"];
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .uploadFile(file, @"https://httpbin.org/post")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            [expectation fulfill];
+        });
+    }];
+}
+
 
 
 
