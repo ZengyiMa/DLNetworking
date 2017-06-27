@@ -322,6 +322,23 @@
     }];
 }
 
+- (void)testMultipartFormData
+{
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .multipartFormData(^(id<AFMultipartFormData> formData) {
+            [formData appendPartWithFormData:[@"ok" dataUsingEncoding:NSUTF8StringEncoding] name:@"test"];
+        })
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            XCTAssertTrue([data[@"form"][@"test"] isEqualToString:@"ok"], @"");
+            [expectation fulfill];
+        })
+        ;
+    }];
+}
+
 
 
 
