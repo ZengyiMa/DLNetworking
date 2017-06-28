@@ -342,6 +342,34 @@
 
 
 
+- (void)testBaseUrl
+{
+    [DLNetworkConfig sharedInstance].baseUrl = @"https://httpbin.org/";
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .post(@"post")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            [expectation fulfill];
+        });
+    }];
+}
+
+- (void)testAbsoluteUrl
+{
+    [DLNetworkConfig sharedInstance].baseUrl = @"https://httpbin.org/";
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .absoluteUrl()
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            [expectation fulfill];
+        });
+    }];
+}
+
+
 
 
 
