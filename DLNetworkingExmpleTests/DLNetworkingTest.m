@@ -364,6 +364,24 @@
         .absoluteUrl()
         .sendRequest()
         .then(^(id data, DLRequestContext *context) {
+            [DLNetworkConfig sharedInstance].baseUrl = nil;
+            [expectation fulfill];
+        });
+    }];
+}
+
+- (void)testGlobalbalHeader
+{
+
+    [DLNetworkConfig sharedInstance].globalHeaders = @{@"globalHeaders":@"ok"};
+
+    [self networkTest:^(XCTestExpectation *expectation) {
+        DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .headers(@{@"header":@"ok"})
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            XCTAssertTrue([data[@"headers"][@"Globalheaders"] isEqualToString:@"ok"], @"");
             [expectation fulfill];
         });
     }];

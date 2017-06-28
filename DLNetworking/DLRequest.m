@@ -235,10 +235,11 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     urlRequest.timeoutInterval = self.requestTimeOut;
     if (self.requestHeaders) {
         [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
-        if ([DLNetworkConfig sharedInstance].globalHeaders) {
-            [urlRequest setAllHTTPHeaderFields:[DLNetworkConfig sharedInstance].globalHeaders];
-        }
     }
+    if ([DLNetworkConfig sharedInstance].globalHeaders) {
+        [urlRequest setAllHTTPHeaderFields:[DLNetworkConfig sharedInstance].globalHeaders];
+    }
+
     return urlRequest;
 }
 
