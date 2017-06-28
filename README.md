@@ -36,11 +36,11 @@
  * [x] 取消请求
  * [x] 批量请求
  * [x] 单独设置 timeOut
- * [ ] https 接口
+ * [x] https 接口
  * [x] 下载
  * [x] 上传
  * [x] 提供请求前的处理，请求后的处理
- * [ ] 统一的配置中心，如 baseUrl，timeOut等
+ * [x] 统一的配置中心，如 baseUrl，timeOut等
  * [ ] 缓存
 
 
