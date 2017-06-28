@@ -35,6 +35,7 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 /// 请求网络对象的唯一标识
 @property (nonatomic, assign, readonly) NSUInteger taskIdentifier;
 
+
 /// 使用 get 方式
 @property (nonatomic, copy, readonly) DLRequest *(^get)(NSString *url);
 
@@ -46,7 +47,6 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 #pragma mark - upload
 @property (nonatomic, copy, readonly) DLRequest *(^uploadFile)(NSString *fileUrl, NSString *toUrl);
-
 @property (nonatomic, copy, readonly) DLRequest *(^uploadData)(NSData *data, NSString *toUrl);
 
 /// 下载进度的回调
@@ -65,8 +65,13 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);
 /// 超时时间
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
+
 @property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
+
 @property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
+
+@property (nonatomic, copy, readonly) DLRequest *(^absoluteUrl)();
+
 @property (nonatomic, copy, readonly) void (^cancel)();
 
 /// 会在开始前被调用

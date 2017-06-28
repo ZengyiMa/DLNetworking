@@ -132,6 +132,7 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 // part
 @property (nonatomic, copy) void (^multipartFormDataBlock)();
 
+@property (nonatomic, assign) BOOL isAbsoluteUrl;
 
 @end
 
@@ -206,6 +207,12 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 - (NSURLRequest *)urlRequest
 {
     NSMutableURLRequest *request = nil;
+    
+    if (!self.isAbsoluteUrl && [DLNetworkConfig sharedInstance].baseUrl) {
+        self.requestUrl = [self.requestUrl stringByAppendingString:[DLNetworkConfig sharedInstance].baseUrl];
+    }
+    
+    
     if (self.multipartFormDataBlock) {
         request = [self.useRequestSerialization multipartFormRequestWithMethod:@"post" URLString:self.requestUrl parameters:self.requestParameters constructingBodyWithBlock:self.multipartFormDataBlock error:nil];
         [self setupUrlRequest:request];
@@ -353,6 +360,14 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 {
     return ^() {
         [self.task cancel];
+    };
+}
+
+- (DLRequest *(^)())absoluteUrl
+{
+    return ^() {
+        
+        return self;
     };
 }
 
