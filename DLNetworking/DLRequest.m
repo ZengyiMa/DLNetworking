@@ -209,7 +209,7 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     NSMutableURLRequest *request = nil;
     
     if (!self.isAbsoluteUrl && [DLNetworkConfig sharedInstance].baseUrl) {
-        self.requestUrl = [self.requestUrl stringByAppendingString:[DLNetworkConfig sharedInstance].baseUrl];
+        self.requestUrl = [[DLNetworkConfig sharedInstance].baseUrl stringByAppendingString:self.requestUrl];
     }
     
     
@@ -366,7 +366,7 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 - (DLRequest *(^)())absoluteUrl
 {
     return ^() {
-        
+        self.isAbsoluteUrl = YES;
         return self;
     };
 }
