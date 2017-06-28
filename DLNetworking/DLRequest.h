@@ -55,17 +55,11 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 /// 上传进度
 @property (nonatomic, copy, readonly) DLRequest *(^uploadProgress)(void (^block)(NSProgress *progress));
 
-
 // 传递的参数
 @property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
 
 // 多文件的data
 @property (nonatomic, copy, readonly) DLRequest *(^multipartFormData)(void (^)(id <AFMultipartFormData> formData));
-
-
-// 传递的参数
-//@property (nonatomic, copy, readonly) DLRequest *(^parameters)(id parameters);
-
 
 /// 添加请求头
 @property (nonatomic, copy, readonly) DLRequest *(^headers)(NSDictionary *parameters);

@@ -142,7 +142,7 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     self = [super init];
     if (self) {
         self.sessionManage = [DLNetworkManager manager].jsonManager;
-        self.requestTimeOut = 30;
+        self.requestTimeOut = [DLNetworkConfig sharedInstance].timeOut;
         self.useRequestSerialization = [DLNetworkManager manager].urlRequestSerialization;
     }
     return self;
@@ -170,8 +170,7 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
 - (NSURLSessionTask *)sessionTaskWithCompletionHandler:(nullable void (^)(NSURLResponse *response, id _Nullable responseObject,  NSError * _Nullable error))completionHandler
 {
     NSURLSessionTask *sessionTask = nil;
-    
-    
+    self.sessionManage.securityPolicy = [DLNetworkConfig sharedInstance].securityPolicy;
     switch (self.requestType) {
         case DLRequestTypeNormal:
         {
@@ -209,28 +208,31 @@ typedef NS_ENUM(NSUInteger, DLRequestType) {
     NSMutableURLRequest *request = nil;
     if (self.multipartFormDataBlock) {
         request = [self.useRequestSerialization multipartFormRequestWithMethod:@"post" URLString:self.requestUrl parameters:self.requestParameters constructingBodyWithBlock:self.multipartFormDataBlock error:nil];
-        request.timeoutInterval = self.requestTimeOut;
+        [self setupUrlRequest:request];
         return request;
-
     } else {
         request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.requestUrl]];
     }
     
-    
-    request.timeoutInterval = self.requestTimeOut;
     if (self.requestMethod == DLRequestMethodGet) {
         request.HTTPMethod = @"get";
     } else if (self.requestMethod == DLRequestMethodPost) {
         request.HTTPMethod = @"Post";
     }
-    
-    if (self.requestHeaders) {
-        [request setAllHTTPHeaderFields:self.requestHeaders];
-    }
-    
-  
+    [self setupUrlRequest:request];
     return [self.useRequestSerialization requestBySerializingRequest:request withParameters:self.requestParameters error:nil];
-    
+}
+
+- (NSMutableURLRequest *)setupUrlRequest:(NSMutableURLRequest *)urlRequest
+{
+    urlRequest.timeoutInterval = self.requestTimeOut;
+    if (self.requestHeaders) {
+        [urlRequest setAllHTTPHeaderFields:self.requestHeaders];
+        if ([DLNetworkConfig sharedInstance].globalHeaders) {
+            [urlRequest setAllHTTPHeaderFields:[DLNetworkConfig sharedInstance].globalHeaders];
+        }
+    }
+    return urlRequest;
 }
 
 # pragma mark - method

@@ -7,18 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AFNetworking.h"
 
 
 @interface DLNetworkConfig : NSObject
 
-
 + (DLNetworkConfig *)sharedInstance;
-
-
 @property (nonatomic, assign) NSTimeInterval timeOut;
-@property (nonatomic, assign) BOOL enableLog;
 @property (nonatomic, strong) NSString *baseUrl;
 @property (nonatomic, strong) NSDictionary *globalHeaders;
-@property (nonatomic, strong) id globalParameters;
-
+@property (nonatomic, strong) AFSecurityPolicy *securityPolicy;
+@property (nonatomic, assign) BOOL enableLog;
 @end

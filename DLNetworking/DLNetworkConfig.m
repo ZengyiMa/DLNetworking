@@ -20,4 +20,14 @@
     return config;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.timeOut = 30;
+        self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    }
+    return self;
+}
+
 @end
