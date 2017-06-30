@@ -106,4 +106,34 @@ DLRequest.new
         });
 ```
 
+## 高级用法
+
+### RequestSerialization
+```
+ DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .parameters(@[@"1",@"2"])
+        .requestSerialization(DLRequestSerializationTypeJSON)
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        });
+
+```
+### ResponseSerialization
+```
+  DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .responseSerialization(DLResponseSerializationTypeDATA)
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+            NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+        });
+```
+
+
 未完待续
+
+
+
+
+
