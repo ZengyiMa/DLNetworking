@@ -66,8 +66,10 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 /// 超时时间
 @property (nonatomic, copy, readonly) DLRequest *(^timeOut)(NSTimeInterval timeOut);
 
+/// 指定请求序列化模式
 @property (nonatomic, copy, readonly) DLRequest *(^requestSerialization)(DLRequestSerializationType type);
 
+/// 指定回调序列化模式
 @property (nonatomic, copy, readonly) DLRequest *(^responseSerialization)(DLResponseSerializationType type);
 
 @property (nonatomic, copy, readonly) DLRequest *(^absoluteUrl)();
