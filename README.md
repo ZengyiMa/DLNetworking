@@ -105,8 +105,81 @@ DLRequest.new
         .then(^(id data, DLRequestContext *context) {
         });
 ```
+## 链式
+### 请求链式
+```
+DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            [self logName:@"testChainRequest --- 1" info:data];
+            [context setReturnValue:DLRequest.new.get(@"https://httpbin.org/get").parameters(@{@"c":@"d"})];
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            [self logName:@"testChainRequest --- 2" info:data];
+        });
+```
+链式多个请求，只需要调用 DLRequestContext 的 setReturnValue 返回一个 return 即可
 
-## 高级用法
+### 链式处理回调
+```
+DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            [context setReturnValue:data[@"args"]];
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+        });
+```
+链式请求回调之后，可以通过多个 then 来处理返回参数，设置 setReturnValue 将会传递到下一个处理 then 
+
+### 链式处理错误回调
+```
+DLRequest.new
+        .get(@"https://httpbin.org/404")
+        .sendRequest()
+        .failure(^(NSError *data, DLRequestContext *context) {
+            [context setReturnValue:data.userInfo[@"NSLocalizedDescription"]];
+        })
+        .failure(^(NSString *data, DLRequestContext *context) {
+        });
+```
+链式请求回调之后，可以通过多个 failure 来处理返回错误参数，设置 setReturnValue 将会传递到下一个处理 failure 
+
+### 中断传递
+```
+ DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+            // 如果没设置，那么将会断言失败。
+            [context stopPropagate];
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+        })
+        .then(^(NSDictionary *data, DLRequestContext *context) {
+        });
+
+```
+
+如果设置了 DLRequestContext 的 stopPropagate 将会中断传递，包括 then 和 faliure。
+
+### 批量发送
+
+```
+	DLRequest *r1 = DLRequest.new.get(@"https://httpbin.org/get");
+        DLRequest *r2 = DLRequest.new.post(@"https://httpbin.org/post");
+        [DLRequest sendBatchRequests:@[r1, r2]].then(^(NSArray *data, DLRequestContext *context) {
+        });
+        
+```
+同时 发送多个请求
+
+## 其他用法
 
 ### RequestSerialization
 ```
@@ -130,8 +203,84 @@ DLRequest.new
         });
 ```
 
+### 取消
+```
+ DLRequest *request = DLRequest.new
+        .get(@"https://httpbin.org/delay/10")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+          
+        }).failure(^(NSError *data, DLRequestContext *context) {
+        });
+        request.cancel();
+```
+取消一个 request
 
-未完待续
+### 请求开始的回调
+
+```
+ DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .willStartRequest(^{
+        })
+        .sendRequest();
+```
+
+### 请求结束的回调
+```
+ DLRequest.new
+        .get(@"https://httpbin.org/get")
+        .parameters(@{@"a":@"b"})
+        .sendRequest()
+        .didFinishedRequest(^{
+        });
+
+```
+## 上传
+### upload data
+```
+  DLRequest.new
+            .uploadData([NSData dataWithContentsOfFile:file], @"https://httpbin.org/post")
+            .sendRequest()
+            .then(^(id data, DLRequestContext *context) {
+            });
+```
+
+### uplaod file
+```
+DLRequest.new
+        .uploadFile(file, @"https://httpbin.org/post")
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        });
+
+```
+
+### MultipartForm
+```
+DLRequest.new
+        .post(@"https://httpbin.org/post")
+        .multipartFormData(^(id<AFMultipartFormData> formData) {
+            [formData appendPartWithFormData:[@"ok" dataUsingEncoding:NSUTF8StringEncoding] name:@"test"];
+        })
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        });
+```
+
+## download 
+### download file 
+```
+DLRequest.new
+        .download(@"https://httpbin.org/image/png", file)
+        .sendRequest()
+        .then(^(id data, DLRequestContext *context) {
+        });
+```
+
+
+更多用法可以查看 DLNetworkingTest 测试用例。
 
 
 
