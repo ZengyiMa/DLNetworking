@@ -1,5 +1,4 @@
 
-# **这是我心中网络请求最应该有的功能**
 
 # DLNetworking
  DLNetworking 是仿照 JS 的 Promise 链式写法，传统的 Block 回调如果在接口调用多的情况下会出现回调地狱（Callback Hell）的情况。
