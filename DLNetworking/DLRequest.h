@@ -96,7 +96,7 @@ typedef NS_ENUM(NSUInteger, DLResponseSerializationType) {
 
 
 
-// batch
+// 批量发送请求
 + (DLRequest *)sendBatchRequests:(NSArray<DLRequest *> *)requests;
 
 
